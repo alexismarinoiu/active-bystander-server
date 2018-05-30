@@ -1,7 +1,8 @@
 stages:
   - build
   - test
-  - deploy
+  - deploy_staging
+  - deploy_production
 
 build:
   stage: build
@@ -13,13 +14,24 @@ test:
   script:
     - mvn test
 
-deploy:
+deploy_staging:
   stage: deploy
   script:
     - pwd
     - mvn package
-    - service ab stop
-    - cp target/active-bystander-1.0-SNAPSHOT.jar /var/ab-cd
-    - service ab start
+    - service ab-staging stop
+    - cp target/active-bystander-1.0-SNAPSHOT.jar /var/ab-cd-staging
+    - service ab-staging start
+  only:
+    - develop
+
+deploy_production:
+  stage: deploy
+  script:
+    - pwd
+    - mvn package
+    - service ab-production stop
+    - cp target/active-bystander-1.0-SNAPSHOT.jar /var/ab-cd-production
+    - service ab-production start
   only:
     - master
