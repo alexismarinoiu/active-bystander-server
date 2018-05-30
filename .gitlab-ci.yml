@@ -3,10 +3,6 @@ stages:
   - test
   - deploy
 
-before_script:
-  - eval $(ssh-agent -s)
-  - echo "$SSH_PRIVATE_KEY" | tr -d ’\r’ | ssh-add - > /dev/null
-
 build:
   stage: build
   script:
@@ -20,9 +16,10 @@ test:
 deploy:
   stage: deploy
   script:
+    - pwd
     - mvn package
-    - scp -o StrictHostKeyChecking=no \
-    ~/target/active-bystander-1.0-SNAPSHOT.jar \
-    cp ~/ab-cd
+    - service ab stop
+    - cp target/active-bystander-1.0-SNAPSHOT.jar /var/ab-cd
+    - service ab start
   only:
     - master
