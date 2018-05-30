@@ -54,3 +54,4 @@ fabric.properties
 .DS_Store
 
 /target
+*.orig

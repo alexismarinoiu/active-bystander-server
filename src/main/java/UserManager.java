@@ -2,6 +2,9 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.query.Query;
+
+import java.util.List;
 
 public class UserManager {
 
@@ -9,18 +12,32 @@ public class UserManager {
 
     SessionFactory factory = new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
 
-    Session session = factory.openSession();
-    Transaction transaction = session.beginTransaction();
+    Session session1 = factory.openSession();
+    Transaction transaction1 = session1.beginTransaction();
 
-    User alexis = new User("alexis");
-    User nik = new User("nik");
-    User enyi = new User("enyi");
+    User alexis = new User();
+    alexis.setUsername("alexis");
+    User nik = new User();
+    nik.setUsername("nik");
+    User enyi = new User();
+    enyi.setUsername("enyi");
 
-    session.save(alexis);
-    session.save(nik);
-    session.save(enyi);
-    transaction.commit();
-    session.close();
+    session1.save(alexis);
+    session1.save(nik);
+    session1.save(enyi);
+    transaction1.commit();
+    session1.close();
+
+    Session session2 = factory.openSession();
+    Transaction transaction2 = session2.beginTransaction();
+    String hql = "FROM User";
+    Query query = session2.createQuery(hql);
+    List results = query.list();
+    for (Object o : results) {
+      System.out.println(((User) o).getUsername());
+    }
+    transaction2.commit();
+    session2.close();
   }
 
 }

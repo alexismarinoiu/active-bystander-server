@@ -5,9 +5,12 @@ import javax.persistence.*;
 public class User {
   @Id
   @Column(name = "username")
-  private final String username;
+  private String username;
 
-  public User(String username) {
+  public User() {
+  }
+
+  public void setUsername(String username) {
     this.username = username;
   }
 
