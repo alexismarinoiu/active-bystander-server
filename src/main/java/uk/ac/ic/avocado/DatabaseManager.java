@@ -14,7 +14,7 @@ public class DatabaseManager {
     this.sessionFactory = sessionFactory;
   }
 
-  public static void main(String[] args) {
+  public static void not_main(String[] args) {
     final Flyway flyway = new Flyway();
     flyway.setDataSource("jdbc:postgresql://db.doc.ic.ac.uk:5432/g1727128_u", "g1727128_u", "b2eWPGJUes");
     flyway.setLocations("filesystem:src/main/resources/db/migrations");
