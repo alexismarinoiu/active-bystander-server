@@ -9,8 +9,11 @@ public class User {
   @Column(name = "username")
   private String username;
 
-  public User() {
-  }
+  @Column(name = "latitude")
+  private double latitude;
+
+  @Column(name = "longitude")
+  private double longitude;
 
   public void setUsername(String username) {
     this.username = username;
@@ -18,5 +21,21 @@ public class User {
 
   public String getUsername() {
     return username;
+  }
+
+  public double getLatitude() {
+    return latitude;
+  }
+
+  public void setLatitude(double latitude) {
+    this.latitude = latitude;
+  }
+
+  public double getLongitude() {
+    return longitude;
+  }
+
+  public void setLongitude(double longitude) {
+    this.longitude = longitude;
   }
 }
