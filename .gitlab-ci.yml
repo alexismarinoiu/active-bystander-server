@@ -20,7 +20,7 @@ deploy_staging:
     - pwd
     - mvn package
     - ssh cd sudo service ab-staging stop
-    - scp -B target/active-bystander-1.0-SNAPSHOT.jar cd:staging
+    - scp -B target/active-bystander-1.0-SNAPSHOT-jar-with-dependencies.jar cd:staging/active-bystander-1.0-SNAPSHOT.jar
     - ssh cd sudo service ab-staging start
   only:
     - develop
@@ -31,7 +31,7 @@ deploy_production:
     - pwd
     - mvn package
     - ssh cd sudo service ab-production stop
-    - scp -B target/active-bystander-1.0-SNAPSHOT.jar cd:production
+    - scp -B target/active-bystander-1.0-SNAPSHOT-jar-with-dependencies.jar cd:production/active-bystander-1.0-SNAPSHOT.jar
     - ssh cd sudo service ab-production start
   only:
     - master
