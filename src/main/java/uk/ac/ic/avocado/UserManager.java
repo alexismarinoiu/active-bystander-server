@@ -1,3 +1,6 @@
+package uk.ac.ic.avocado;
+
+import org.flywaydb.core.Flyway;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -10,7 +13,13 @@ public class UserManager {
 
   public static void main(String[] args) {
 
-    SessionFactory factory = new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
+    final Flyway flyway = new Flyway();
+    flyway.setDataSource("jdbc:postgresql://db.doc.ic.ac.uk:5432/g1727128_u", "g1727128_u", "b2eWPGJUes");
+    flyway.setLocations("filesystem:src/main/resources/db/migrations");
+    flyway.setBaselineOnMigrate(true);
+    flyway.migrate();
+
+    final SessionFactory factory = new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
 
     Session session1 = factory.openSession();
     Transaction transaction1 = session1.beginTransaction();

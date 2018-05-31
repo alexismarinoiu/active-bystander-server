@@ -1,3 +1,5 @@
+package uk.ac.ic.avocado;
+
 import javax.persistence.*;
 
 @Entity
