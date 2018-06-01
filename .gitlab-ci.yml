@@ -4,6 +4,9 @@ stages:
   - deploy_staging
   - deploy_production
 
+before_script:
+  - export MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=128m"
+
 build:
   stage: build
   script:
