@@ -30,7 +30,7 @@ public class LocationController {
     }
 
     /* add user to the database*/
-    Main.dm.addUser(location.getUsername(), location.getLatitude(), location.getLatitude());
+    Main.dm.addUser(location.getUsername(), location.getLatitude(), location.getLongitude());
 
     return new ResponseEntity<Location>(location, HttpStatus.OK);
   }
