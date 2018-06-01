@@ -10,6 +10,8 @@ import java.util.HashMap;
 
 @SpringBootApplication
 public class Main {
+  public static DatabaseManager dm;
+
   public static void main(String[] args) throws IOException {
 
     final Configuration.Type environment = Configuration.getInstance().getCurrent();
@@ -23,7 +25,7 @@ public class Main {
     final SessionFactory sessionFactory = new org.hibernate.cfg.Configuration()
         .configure("hibernate.cfg.xml")
         .buildSessionFactory();
-    final DatabaseManager db = new DatabaseManager(sessionFactory);
+    dm = new DatabaseManager(sessionFactory);
     final int port = environment == Configuration.Type.PRODUCTION ? 8080 : 8081;
 
     new SpringApplicationBuilder()
