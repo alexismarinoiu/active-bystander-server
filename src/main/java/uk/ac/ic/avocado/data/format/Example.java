@@ -6,7 +6,7 @@ public class Example {
   }
 
   public String getExample() {
-    return "Hello";
+    return "Hello World";
   }
 
 }
