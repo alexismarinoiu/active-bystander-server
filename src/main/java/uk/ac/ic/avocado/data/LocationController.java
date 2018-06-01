@@ -15,17 +15,20 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/location")
 public class LocationController {
 
-  @RequestMapping(value="/", method={RequestMethod.GET})
+  @RequestMapping(method={RequestMethod.GET})
   public ResponseEntity<Location> getLocation(@RequestParam(value="username", defaultValue="a116") String username) {
     return new ResponseEntity<Location>(new Location(120.00,
         130.00, username), HttpStatus.OK);
   }
 
-  @RequestMapping(value="/", method={RequestMethod.POST})
+  @RequestMapping(method={RequestMethod.POST})
   public ResponseEntity<Location> postLocation(@RequestBody Location location){
     if (location == null) {
       return new ResponseEntity<Location>(location, HttpStatus.NO_CONTENT);
     }
+
+    
+
     return new ResponseEntity<Location>(location, HttpStatus.OK);
   }
 
