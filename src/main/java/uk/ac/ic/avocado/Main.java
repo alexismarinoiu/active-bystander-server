@@ -11,7 +11,7 @@ import java.util.HashMap;
 @SpringBootApplication
 public class Main {
   public static DatabaseManager dm;
-  
+
   public static void main(String[] args) throws IOException {
 
     final Configuration.Type environment = Configuration.getInstance().getCurrent();

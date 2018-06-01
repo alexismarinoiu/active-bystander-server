@@ -7,18 +7,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import uk.ac.ic.avocado.Main;
 import uk.ac.ic.avocado.data.format.Location;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("/location")
 public class LocationController {
 
   @RequestMapping(method={RequestMethod.GET})
-  public ResponseEntity<Location> getLocation(@RequestParam(value="username", defaultValue="a116") String username) {
-    return new ResponseEntity<Location>(new Location(120.00,
-        130.00, username), HttpStatus.OK);
+  public ResponseEntity<List<Location>> getLocation(@RequestParam(value="username", defaultValue="a116") String username) {
+
+    return new ResponseEntity<List<Location>>(Main.dm.getAllLocations(), HttpStatus.OK);
   }
 
   @RequestMapping(method={RequestMethod.POST})
@@ -27,7 +29,8 @@ public class LocationController {
       return new ResponseEntity<Location>(location, HttpStatus.NO_CONTENT);
     }
 
-    
+    /* add user to the database*/
+    Main.dm.addUser(location.getUsername(), location.getLatitude(), location.getLatitude());
 
     return new ResponseEntity<Location>(location, HttpStatus.OK);
   }
