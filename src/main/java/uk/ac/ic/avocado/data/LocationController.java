@@ -20,8 +20,8 @@ public class LocationController {
     return ResponseEntity.ok(Main.databaseManager.getAllLocations());
   }
 
-  @RequestMapping(method={RequestMethod.POST})
-  public ResponseEntity<Location> postLocation(@RequestBody Location location){
+  @RequestMapping(method={RequestMethod.PUT})
+  public ResponseEntity<Location> addLocation(@RequestBody Location location){
     Main.databaseManager.addOrCreateUserWithLocation(location.getUsername(), location.getLatitude(), location.getLongitude());
     return ResponseEntity.ok(location);
   }
