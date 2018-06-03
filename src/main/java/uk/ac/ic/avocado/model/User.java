@@ -1,9 +1,9 @@
-package uk.ac.ic.avocado;
+package uk.ac.ic.avocado.model;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "user")
+@Table(name = "\"user\"")
 public class User {
   @Id
   @Column(name = "username")
@@ -15,10 +15,10 @@ public class User {
   @Column(name = "longitude")
   private double longitude;
 
-  User() {
+  public User() {
   }
 
-  User(String username, double latitude, double longitude) {
+  public User(String username, double latitude, double longitude) {
     this.username = username;
     this.latitude = latitude;
     this.longitude = longitude;
