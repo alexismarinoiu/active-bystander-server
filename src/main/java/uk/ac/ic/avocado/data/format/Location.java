@@ -6,9 +6,6 @@ public class Location {
   private Double longitude;
   private String username;
 
-  public Location() {
-  }
-
   public Location(Double latitude, Double longitude, String username) {
     this.latitude = latitude;
     this.longitude = longitude;
