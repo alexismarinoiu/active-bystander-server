@@ -6,7 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "SITUATION")
+@Table(name = "situation")
 public class Situation {
     @Id
     @Column(name = "id")
@@ -15,7 +15,7 @@ public class Situation {
     @Column(name = "html")
     private String html;
 
-    public String getSituation() {
+    public String getId() {
         return id;
     }
 

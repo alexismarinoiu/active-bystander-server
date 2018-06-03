@@ -1,13 +1,9 @@
 package uk.ac.ic.avocado;
 
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import uk.ac.ic.avocado.data.format.Location;
-import uk.ac.ic.avocado.data.format.Situation;
+import uk.ac.ic.avocado.data.format.Advice;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,4 +30,11 @@ public class DatabaseManager {
     }
   }
 
+  public List<Advice> getAllSituations() {
+      try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+          return tb.getSession().createQuery("FROM Situation", Situation.class).list().stream()
+                  .map(situation -> new Advice(situation.getId(), situation.getHtml()))
+                  .collect(Collectors.toList());
+      }
+  }
 }
