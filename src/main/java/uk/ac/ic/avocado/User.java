@@ -3,7 +3,7 @@ package uk.ac.ic.avocado;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "USERS")
+@Table(name = "user")
 public class User {
   @Id
   @Column(name = "username")
