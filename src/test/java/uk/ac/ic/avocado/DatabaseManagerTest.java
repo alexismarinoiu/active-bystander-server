@@ -16,8 +16,8 @@ public class DatabaseManagerTest {
 
     @Test
     public void returnAllLocationsAddedWhenPostAGETRequest() {
-        databaseManager.addUser("Alex", 200,300);
-        databaseManager.addUser("Emma", 400, 500);
+        databaseManager.addOrCreateUserWithLocation("Alex", 200,300);
+        databaseManager.addOrCreateUserWithLocation("Emma", 400, 500);
 
         List<Location> locations =  databaseManager.getAllLocations();
         Location entry1 = locations.get(0);
