@@ -5,12 +5,8 @@ public class Situation {
     private String situation;
     private String html;
 
-    public Situation(String situation){
-        this.situation = situation;
-    }
-
-    public Situation(String situation, String html) {
-        this.situation = situation;
+    public Situation(String id, String html) {
+        this.situation = id;
         this.html = html;
     }
 

@@ -4,6 +4,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import uk.ac.ic.avocado.data.format.Location;
+import uk.ac.ic.avocado.data.format.Situation;
 
 import java.util.ArrayList;
 import java.util.Iterator;
