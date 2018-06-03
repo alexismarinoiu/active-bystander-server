@@ -15,6 +15,15 @@ public class User {
   @Column(name = "longitude")
   private double longitude;
 
+  User() {
+  }
+
+  User(String username, double latitude, double longitude) {
+    this.username = username;
+    this.latitude = latitude;
+    this.longitude = longitude;
+  }
+
   public void setUsername(String username) {
     this.username = username;
   }
