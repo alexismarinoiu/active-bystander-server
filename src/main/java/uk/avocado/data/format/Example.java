@@ -1,4 +1,4 @@
-package uk.ac.ic.avocado.data.format;
+package uk.avocado.data.format;
 
 public class Example {
 

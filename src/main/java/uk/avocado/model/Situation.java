@@ -1,4 +1,4 @@
-package uk.ac.ic.avocado.model;
+package uk.avocado.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

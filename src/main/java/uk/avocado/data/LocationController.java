@@ -1,10 +1,9 @@
-package uk.ac.ic.avocado.data;
+package uk.avocado.data;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uk.ac.ic.avocado.Main;
-import uk.ac.ic.avocado.data.format.Location;
+import uk.avocado.Main;
+import uk.avocado.data.format.Location;
 
 import java.util.List;
 
