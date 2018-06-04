@@ -11,6 +11,7 @@ public class Thread {
   private String threadId;
 
   @Column(name = "status")
+  @Enumerated(EnumType.STRING)
   private Status status;
 
   @OneToMany
