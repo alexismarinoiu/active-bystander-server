@@ -1,10 +1,18 @@
 package uk.avocado.data;
 
-import static java.lang.Math.*;
+import static java.lang.Math.abs;
+import static java.lang.Math.atan2;
+import static java.lang.Math.cos;
+import static java.lang.Math.floor;
+import static java.lang.Math.pow;
+import static java.lang.Math.sin;
+import static java.lang.Math.sqrt;
+import static java.lang.Math.toRadians;
 
 public class LocationUtils {
 
   public static int EARTH_RADIUS = 6371000; // metres
+  public static int FILTER_RADIUS = 500; // metres
 
   public static double calculateDistance(double lat1, double long1, double lat2, double long2) {
     double deltaLong = toRadians(abs(long1 - long2));
