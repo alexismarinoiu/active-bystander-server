@@ -1,9 +1,9 @@
 package uk.avocado.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import uk.avocado.data.format.Participant;
+
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "thread")
@@ -16,11 +16,20 @@ public class Thread {
   @Column(name = "status")
   private Status status;
 
+  @OneToMany
+  @JoinColumn(name = "threadid")
+  private List<Participant> participants;
+
+
   public String getThreadid() {
     return threadid;
   }
 
   public Status getStatus() {
     return status;
+  }
+
+  public List<Participant> getParticipants() {
+    return participants;
   }
 }
