@@ -8,26 +8,24 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "situation")
 public class Situation {
-    @Id
-    @Column(name = "id")
-    private String id;
+  @Id
+  @Column(name = "id")
+  private String id;
 
-    @Column(name = "html")
-    private String html;
+  @Column(name = "html")
+  private String html;
 
-    public String getId() {
-        return id;
-    }
+  public String getId() {
+    return id;
+}
 
-    public String getHtml() {
-        return html;
-    }
+  public String getHtml() { return html; }
 
-    public void setSituation(String id) {
-        this.id = id;
-    }
+  public void setSituation(String id) {
+    this.id = id;
+}
 
-    public void setHtml(String html) {
-        this.html = html;
-    }
+  public void setHtml(String html) {
+    this.html = html;
+}
 }

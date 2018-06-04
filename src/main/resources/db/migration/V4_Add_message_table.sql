@@ -1,4 +1,5 @@
 CREATE TABLE message (
+  id SERIAL PRIMARY KEY,
   sender VARCHAR(255),
   seq int, timestamp TIMESTAMP,
   content TEXT,
@@ -11,6 +12,7 @@ CREATE TABLE thread (
 );
 
 CREATE TABLE participant (
+  id SERIAL PRIMARY KEY,
   THREADID VARCHAR(225),
   username VARCHAR(225)
 );

@@ -1,13 +1,14 @@
 package uk.avocado.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
 @Table(name = "message")
 public class Message {
+  @Id
+  @GeneratedValue(strategy=GenerationType.AUTO)
+  private int id;
 
   @Column(name = "sender")
   private String sender;
@@ -21,8 +22,8 @@ public class Message {
   @Column(name = "content")
   private String content;
 
-  @Column(name = "threadid")
-  private String threadid;
+  @Column(name = "threadId")
+  private String threadId;
 
   public String getSender() {
     return sender;
@@ -40,7 +41,7 @@ public class Message {
     return content;
   }
 
-  public String getThreadid() {
-    return threadid;
+  public String getThreadId() {
+    return threadId;
   }
 }

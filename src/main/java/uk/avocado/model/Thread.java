@@ -1,28 +1,25 @@
 package uk.avocado.model;
 
-import uk.avocado.data.format.Participant;
-
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Table(name = "thread")
 public class Thread {
-
   @Id
-  @Column(name = "threadid")
-  private String threadid;
+  @Column(name = "threadId")
+  private String threadId;
 
   @Column(name = "status")
   private Status status;
 
   @OneToMany
-  @JoinColumn(name = "threadid")
+  @JoinColumn(name = "threadId")
   private List<Participant> participants;
 
 
-  public String getThreadid() {
-    return threadid;
+  public String getThreadId() {
+    return threadId;
   }
 
   public Status getStatus() {

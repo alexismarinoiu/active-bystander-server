@@ -2,10 +2,12 @@ package uk.avocado;
 
 import org.hibernate.SessionFactory;
 import uk.avocado.data.format.Location;
+import uk.avocado.data.format.Participant;
 import uk.avocado.data.format.Situation;
 import uk.avocado.data.format.Thread;
 import uk.avocado.model.User;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,7 +45,14 @@ public class DatabaseManager {
   public List<Thread> getAllThreads(String username) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
       return tb.getSession().createQuery("FROM Thread", uk.avocado.model.Thread.class).list().stream()
-          .map(thread -> new Thread(thread.getThreadid(), thread.getStatus(), thread.getParticipants()))
+          .map(thread -> {
+            List<Participant> participants = new ArrayList<>();
+            List<uk.avocado.model.Participant> participants_model = thread.getParticipants();
+            for (uk.avocado.model.Participant p : participants_model) {
+              participants.add(new Participant(p.getThreadId(), p.getUsername()));
+            }
+            return new Thread(thread.getThreadId(), thread.getStatus(), participants);
+          })
           .collect(Collectors.toList());
     }
   }
