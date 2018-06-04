@@ -2,16 +2,16 @@ package uk.avocado.data.format;
 
 public class Participant {
 
-  private String threadid;
+  private String threadId;
   private String username;
 
-  public Participant(String threadid, String username) {
-    this.threadid = threadid;
+  public Participant(String threadId, String username) {
+    this.threadId = threadId;
     this.username = username;
   }
 
-  public String getThreadid() {
-    return threadid;
+  public String getThreadId() {
+    return threadId;
   }
 
   public String getUsername() {
