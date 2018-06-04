@@ -1,4 +1,4 @@
-package uk.ac.ic.avocado;
+package uk.avocado;
 
 public class Configuration {
     private static Configuration instance = null;

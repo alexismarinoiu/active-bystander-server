@@ -1,4 +1,4 @@
-package uk.ac.ic.avocado;
+package uk.avocado;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;

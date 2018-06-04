@@ -1,4 +1,4 @@
-package uk.ac.ic.avocado;
+package uk.avocado;
 
 import org.flywaydb.core.Flyway;
 import org.hibernate.boot.Metadata;

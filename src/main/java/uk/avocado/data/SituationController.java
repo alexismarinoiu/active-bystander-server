@@ -1,11 +1,11 @@
-package uk.ac.ic.avocado.data;
+package uk.avocado.data;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import uk.ac.ic.avocado.Main;
-import uk.ac.ic.avocado.data.format.Situation;
+import uk.avocado.Main;
+import uk.avocado.data.format.Situation;
 
 import java.util.List;
 
