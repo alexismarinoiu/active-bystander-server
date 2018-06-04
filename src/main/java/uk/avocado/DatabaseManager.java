@@ -3,6 +3,7 @@ package uk.avocado;
 import org.hibernate.SessionFactory;
 import uk.avocado.data.format.Location;
 import uk.avocado.data.format.Situation;
+import uk.avocado.data.format.Thread;
 import uk.avocado.model.User;
 
 import java.util.List;
@@ -32,10 +33,18 @@ public class DatabaseManager {
   }
 
   public List<Situation> getAllSituations() {
-      try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-          return tb.getSession().createQuery("FROM Situation", uk.avocado.model.Situation.class).list().stream()
-                  .map(situation -> new Situation(situation.getId(), situation.getHtml()))
-                  .collect(Collectors.toList());
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      return tb.getSession().createQuery("FROM Situation", uk.avocado.model.Situation.class).list().stream()
+             .map(situation -> new Situation(situation.getId(), situation.getHtml()))
+             .collect(Collectors.toList());
       }
+  }
+
+  public List<Thread> getAllThreads(String username) {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      return tb.getSession().createQuery("FROM Thread", uk.avocado.model.Thread.class).list().stream()
+          .map(thread -> new Thread(thread.getThreadid(), thread.getStatus(), thread.getParticipants()))
+          .collect(Collectors.toList());
+    }
   }
 }
