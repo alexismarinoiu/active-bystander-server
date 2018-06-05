@@ -3,11 +3,8 @@ package uk.avocado;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.CriteriaQuery;
-import uk.avocado.data.format.Location;
-import uk.avocado.data.format.Participant;
-import uk.avocado.data.format.Situation;
+import uk.avocado.data.format.*;
 import uk.avocado.data.format.Thread;
-import uk.avocado.model.Message;
 import uk.avocado.model.Status;
 import uk.avocado.model.User;
 
@@ -57,8 +54,15 @@ public class DatabaseManager {
           .collect(Collectors.toList());
     }
   }
-//
-//  public Object getAllMessages(String threadId) {
-//    try (final TransactionBlock tb)
-//  }
+
+  public List<Message> getAllMessages(String threadId) {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      final String query = "From Message M where M.threadId = :threadId ORDER BY M.timestamp, M.seq";
+      return tb.getSession().createQuery(query, uk.avocado.model.Message.class)
+               .setParameter("threadId", threadId)
+               .list().stream()
+               .map(m -> new Message(m.getSender(), m.getSeq(), m.getTimestamp(), m.getContent(), m.getThreadId()))
+               .collect(Collectors.toList());
+    }
+  }
 }

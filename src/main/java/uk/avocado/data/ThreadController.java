@@ -21,8 +21,8 @@ public class ThreadController {
     return ResponseEntity.ok(Main.databaseManager.getAllParticipants(username));
   }
 
-//  @RequestMapping(value = "/message", method = RequestMethod.GET)
-//  public ResponseEntity<List<Message>> getAllMessages(@RequestParam(value = "threadId") String threadId) {
-//    return ResponseEntity.ok(Main.databaseManager.getAllMessages(threadId));
-//  }
+  @RequestMapping(value = "/message", method = RequestMethod.GET)
+  public ResponseEntity<List<Message>> getAllMessages(@RequestParam(value = "threadId") String threadId) {
+    return ResponseEntity.ok(Main.databaseManager.getAllMessages(threadId));
+  }
 }
