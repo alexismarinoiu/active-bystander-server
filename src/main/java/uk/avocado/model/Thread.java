@@ -18,7 +18,6 @@ public class Thread {
   @JoinColumn(name = "threadId")
   private List<Participant> participants;
 
-
   public String getThreadId() {
     return threadId;
   }

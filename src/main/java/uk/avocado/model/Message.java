@@ -2,6 +2,8 @@ package uk.avocado.model;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "message")
@@ -25,6 +27,9 @@ public class Message {
   @Column(name = "threadId")
   private String threadId;
 
+  @OneToMany(mappedBy = "threadId")
+  private List<Participant> participants;
+
   public String getSender() {
     return sender;
   }
@@ -43,5 +48,9 @@ public class Message {
 
   public String getThreadId() {
     return threadId;
+  }
+
+  public List<Participant> getParticipants() {
+    return participants;
   }
 }

@@ -17,7 +17,7 @@ public class ThreadController {
 
   //search by username, return all the thread
   @RequestMapping(value = "/participant", method = RequestMethod.GET)
-  public ResponseEntity<List<Thread>> getAllThreads(@RequestParam(value = "username") String username) {
+  public ResponseEntity<List<Participant>> getAllThreads(@RequestParam(value = "username") String username) {
     return ResponseEntity.ok(Main.databaseManager.getAllThreads(username));
   }
 }
