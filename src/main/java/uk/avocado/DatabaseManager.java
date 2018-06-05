@@ -1,6 +1,7 @@
 package uk.avocado;
 
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.CriteriaQuery;
 import uk.avocado.data.format.Location;
 import uk.avocado.data.format.Participant;
@@ -56,4 +57,8 @@ public class DatabaseManager {
           .collect(Collectors.toList());
     }
   }
+//
+//  public Object getAllMessages(String threadId) {
+//    try (final TransactionBlock tb)
+//  }
 }
