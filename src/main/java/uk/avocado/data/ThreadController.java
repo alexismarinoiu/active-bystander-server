@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.avocado.Main;
 import uk.avocado.data.format.Participant;
-import uk.avocado.data.format.Thread;
 
 import java.util.List;
 
@@ -17,7 +16,7 @@ public class ThreadController {
 
   //search by username, return all the thread
   @RequestMapping(value = "/participant", method = RequestMethod.GET)
-  public ResponseEntity<List<Thread>> getAllThreads(@RequestParam(value = "username") String username) {
-    return ResponseEntity.ok(Main.databaseManager.getAllThreads(username));
+  public ResponseEntity<List<Participant>> getAllThreads(@RequestParam(value = "username") String username) {
+    return ResponseEntity.ok(Main.databaseManager.getAllParticipants(username));
   }
 }

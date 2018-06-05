@@ -1,10 +1,13 @@
 package uk.avocado;
 
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.CriteriaQuery;
 import uk.avocado.data.format.Location;
 import uk.avocado.data.format.Participant;
 import uk.avocado.data.format.Situation;
 import uk.avocado.data.format.Thread;
+import uk.avocado.model.Message;
+import uk.avocado.model.Status;
 import uk.avocado.model.User;
 
 import java.util.ArrayList;
@@ -42,17 +45,14 @@ public class DatabaseManager {
       }
   }
 
-  public List<Thread> getAllThreads(String username) {
+  public List<Participant> getAllParticipants(String username) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-      return tb.getSession().createQuery("FROM Thread", uk.avocado.model.Thread.class).list().stream()
-          .map(thread -> {
-            List<Participant> participants = new ArrayList<>();
-            List<uk.avocado.model.Participant> participants_model = thread.getParticipants();
-            for (uk.avocado.model.Participant p : participants_model) {
-              participants.add(new Participant(p.getThreadId(), p.getUsername()));
-            }
-            return new Thread(thread.getThreadId(), thread.getStatus(), participants);
-          })
+      final String query = "From Participant P WHERE P.threadId IN " +
+                           "(SELECT M.threadId FROM Message M WHERE sender = :username)";
+      return tb.getSession().createQuery(query, uk.avocado.model.Participant.class)
+          .setParameter("username", username)
+          .list().stream()
+          .map(p -> new Participant(p.getThreadId(), p.getUsername()))
           .collect(Collectors.toList());
     }
   }
