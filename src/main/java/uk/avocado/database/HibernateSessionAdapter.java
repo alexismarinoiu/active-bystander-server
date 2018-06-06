@@ -26,7 +26,7 @@ public class HibernateSessionAdapter implements DatabaseSession {
   }
 
   @Override
-  public <R> DatabaseQuery<R> createQuery(String query, Class<R> situationClass) {
-    return new HibernateQueryAdapter<>(session.createQuery(query, situationClass));
+  public <R> DatabaseQuery<R> createQuery(String query, Class<R> targetClass) {
+    return new HibernateQueryAdapter<>(session.createQuery(query, targetClass));
   }
 }

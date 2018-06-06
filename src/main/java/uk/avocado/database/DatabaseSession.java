@@ -8,6 +8,6 @@ public interface DatabaseSession {
 
   void saveOrUpdate(Object object);
 
-  <R> DatabaseQuery<R> createQuery(String fromSituation, Class<R> situationClass);
+  <R> DatabaseQuery<R> createQuery(String query, Class<R> targetClass);
 
 }
