@@ -12,7 +12,7 @@ public class Thread {
 
   private final String threadId;
   private final Status status;
-  private String title = "Anonymous";
+  private final String title;
 
   public Thread(uk.avocado.model.Thread thread, String username) {
     this.threadId = thread.getThreadId();
@@ -24,6 +24,8 @@ public class Thread {
       title = participants.stream().filter(p -> !p.getUsername().equals(username))
                                    .map(Participant::getUsername)
                                    .collect(Collectors.joining(", "));
+    } else {
+      title = "Anonymous";
     }
 
   }
