@@ -2,7 +2,9 @@ package uk.avocado;
 
 import org.hibernate.SessionFactory;
 import uk.avocado.data.format.Location;
+import uk.avocado.data.format.Message;
 import uk.avocado.data.format.Situation;
+import uk.avocado.data.format.Thread;
 import uk.avocado.model.User;
 
 import java.util.List;
@@ -32,10 +34,35 @@ public class DatabaseManager {
   }
 
   public List<Situation> getAllSituations() {
-      try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-          return tb.getSession().createQuery("FROM Situation", uk.avocado.model.Situation.class).list().stream()
-                  .map(situation -> new Situation(situation.getId(), situation.getHtml()))
-                  .collect(Collectors.toList());
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      return tb.getSession().createQuery("FROM Situation", uk.avocado.model.Situation.class).list().stream()
+             .map(Situation::new)
+             .collect(Collectors.toList());
       }
+  }
+
+  public List<Thread> getAllThreadsForUser(String username) {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      final String query = "FROM Thread T WHERE T.threadId IN (SELECT P.threadId FROM Participant P WHERE username = :username)";
+      return tb.getSession().createQuery(query, uk.avocado.model.Thread.class)
+          .setParameter("username", username)
+          .list().stream()
+          .map(Thread::new)
+          .collect(Collectors.toList());
+    }
+  }
+
+  public List<Message> getAllMessagesForThreadIdAndUser(String username, String threadId) {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      final String query = "FROM Message M WHERE M.threadId = :threadId AND EXISTS " +
+                           "(SELECT P FROM Participant P WHERE P.username = :username AND P.threadId = :threadId) " +
+                           "ORDER BY M.timestamp, M.seq";
+      return tb.getSession().createQuery(query, uk.avocado.model.Message.class)
+               .setParameter("threadId", threadId)
+               .setParameter("username", username)
+               .list().stream()
+               .map(Message::new)
+               .collect(Collectors.toList());
+    }
   }
 }
