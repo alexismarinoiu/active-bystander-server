@@ -8,12 +8,10 @@ public class Thread {
 
   private final String threadId;
   private final Status status;
-  private final List<Participant> participants;
 
-  public Thread(String threadId, Status status, List<Participant> participants) {
-    this.threadId = threadId;
-    this.status = status;
-    this.participants = participants;
+  public Thread(uk.avocado.model.Thread thread) {
+    this.threadId = thread.getThreadId();
+    this.status = thread.getStatus();
   }
 
   public String getThreadId() {
@@ -23,10 +21,5 @@ public class Thread {
   public Status getStatus() {
     return status;
   }
-
-  public List<Participant> getParticipants() {
-    return participants;
-  }
-
 
 }

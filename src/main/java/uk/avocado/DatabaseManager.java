@@ -3,8 +3,8 @@ package uk.avocado;
 import org.hibernate.SessionFactory;
 import uk.avocado.data.format.Location;
 import uk.avocado.data.format.Message;
-import uk.avocado.data.format.Participant;
 import uk.avocado.data.format.Situation;
+import uk.avocado.data.format.Thread;
 import uk.avocado.model.User;
 
 import java.util.List;
@@ -41,23 +41,25 @@ public class DatabaseManager {
       }
   }
 
-  public List<Participant> getAllParticipants(String username) {
+  public List<Thread> getAllThreadIdForUser(String username) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-      final String query = "From Participant P WHERE P.threadId IN " +
-                           "(SELECT M.threadId FROM Message M WHERE sender = :username)";
-      return tb.getSession().createQuery(query, uk.avocado.model.Participant.class)
+      final String query = "FROM Thread T WHERE T.threadId IN (SELECT P.threadId FROM Participant P WHERE username = :username)";
+      return tb.getSession().createQuery(query, uk.avocado.model.Thread.class)
           .setParameter("username", username)
           .list().stream()
-          .map(Participant::new)
+          .map(Thread::new)
           .collect(Collectors.toList());
     }
   }
 
-  public List<Message> getAllMessages(String threadId) {
+  public List<Message> getAllMessagesForThreadIdAndUser(String username, String threadId) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-      final String query = "From Message M where M.threadId = :threadId ORDER BY M.timestamp, M.seq";
+      final String query = "FROM Message M WHERE M.threadId = :threadId AND EXISTS " +
+                           "(FROM Participant P WHERE P.username = :username AND P.threadId = :threadId) " +
+                           "ORDER BY M.timestamp, M.seq";
       return tb.getSession().createQuery(query, uk.avocado.model.Message.class)
                .setParameter("threadId", threadId)
+               .setParameter("username", username)
                .list().stream()
                .map(Message::new)
                .collect(Collectors.toList());

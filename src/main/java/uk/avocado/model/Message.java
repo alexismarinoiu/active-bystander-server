@@ -27,9 +27,6 @@ public class Message {
   @Column(name = "threadId")
   private String threadId;
 
-  @OneToMany(mappedBy = "threadId")
-  private List<Participant> participants;
-
   public String getSender() {
     return sender;
   }
@@ -50,7 +47,4 @@ public class Message {
     return threadId;
   }
 
-  public List<Participant> getParticipants() {
-    return participants;
-  }
 }

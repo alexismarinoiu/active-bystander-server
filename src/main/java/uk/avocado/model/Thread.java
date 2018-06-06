@@ -14,10 +14,6 @@ public class Thread {
   @Enumerated(EnumType.STRING)
   private Status status;
 
-  @OneToMany
-  @JoinColumn(name = "threadId")
-  private List<Participant> participants;
-
   public String getThreadId() {
     return threadId;
   }
@@ -26,7 +22,4 @@ public class Thread {
     return status;
   }
 
-  public List<Participant> getParticipants() {
-    return participants;
-  }
 }
