@@ -24,6 +24,14 @@ public class ThreadController {
   public ResponseEntity<List<Message>> getAllMessages(HttpServletRequest givenRequest,
                                                       @PathVariable("threadId") String threadId) {
     final AvocadoHttpServletRequest request = new AvocadoHttpServletRequest(givenRequest);
-    return ResponseEntity.ok(Main.databaseManager.getAllMessagesForThreadIdAndUser(request.getUsername(), threadId));
+    return ResponseEntity.ok(Main.databaseManager.getAllMessagesForThread(request.getUsername(), threadId));
+  }
+
+  @RequestMapping(value = "/{threadId}/last-message")
+  public ResponseEntity<String> getLastMessage(HttpServletRequest givenRequest,
+                                               @PathVariable("threadId") String threadId) {
+    final AvocadoHttpServletRequest request = new AvocadoHttpServletRequest(givenRequest);
+    List<Message> messages = Main.databaseManager.getAllMessagesForThread(request.getUsername(), threadId);
+    return ResponseEntity.ok(messages.get(messages.size() - 1).getContent());
   }
 }

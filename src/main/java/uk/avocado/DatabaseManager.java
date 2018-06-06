@@ -50,7 +50,7 @@ public class DatabaseManager {
     }
   }
 
-  public List<Message> getAllMessagesForThreadIdAndUser(String username, String threadId) {
+  public List<Message> getAllMessagesForThread(String username, String threadId) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
       final String query = "FROM Message M WHERE M.threadId = :threadId AND EXISTS " +
                            "(SELECT P FROM Participant P WHERE P.username = :username AND P.threadId = :threadId) " +
