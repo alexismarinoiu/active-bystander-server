@@ -1,18 +1,20 @@
-package uk.avocado;
+package uk.avocado.database;
 
 import org.hibernate.SessionFactory;
 import uk.avocado.data.format.*;
+import java.util.List;
+import java.util.stream.Collectors;
+import uk.avocado.data.format.Location;
+import uk.avocado.data.format.Message;
+import uk.avocado.data.format.Situation;
 import uk.avocado.data.format.Thread;
 import uk.avocado.model.User;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 public class DatabaseManager {
 
-  private final SessionFactory sessionFactory;
+  private final DatabaseSessionFactory sessionFactory;
 
-  public DatabaseManager(final SessionFactory sessionFactory) {
+  public DatabaseManager(final DatabaseSessionFactory sessionFactory) {
     this.sessionFactory = sessionFactory;
   }
 
@@ -25,9 +27,10 @@ public class DatabaseManager {
 
   public List<Location> getAllLocations() {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-      return tb.getSession().createQuery("FROM User", User.class).list().stream()
-              .map(user -> new Location(user.getLatitude(), user.getLongitude(), user.getUsername()))
-              .collect(Collectors.toList());
+      return tb.getSession().createQuery("FROM User", User.class).list()
+          .stream()
+          .map(user -> new Location(user.getLatitude(), user.getLongitude(), user.getUsername()))
+          .collect(Collectors.toList());
     }
   }
 
