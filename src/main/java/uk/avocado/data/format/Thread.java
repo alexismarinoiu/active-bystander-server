@@ -16,7 +16,7 @@ public class Thread {
     this.participants = participants;
   }
 
-  public String getThreadid() {
+  public String getThreadId() {
     return threadId;
   }
 
