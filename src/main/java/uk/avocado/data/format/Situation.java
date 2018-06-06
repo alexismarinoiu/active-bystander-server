@@ -5,9 +5,9 @@ public class Situation {
     private final String id;
     private final String html;
 
-    public Situation(String id, String html) {
-        this.id = id;
-        this.html = html;
+    public Situation(uk.avocado.model.Situation situation) {
+        this.id = situation.getId();
+        this.html = situation.getHtml();
     }
 
     public String getId() {

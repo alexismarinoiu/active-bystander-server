@@ -36,12 +36,12 @@ public class DatabaseManager {
   public List<Situation> getAllSituations() {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
       return tb.getSession().createQuery("FROM Situation", uk.avocado.model.Situation.class).list().stream()
-             .map(situation -> new Situation(situation.getId(), situation.getHtml()))
+             .map(Situation::new)
              .collect(Collectors.toList());
       }
   }
 
-  public List<Thread> getAllThreadIdForUser(String username) {
+  public List<Thread> getAllThreadsForUser(String username) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
       final String query = "FROM Thread T WHERE T.threadId IN (SELECT P.threadId FROM Participant P WHERE username = :username)";
       return tb.getSession().createQuery(query, uk.avocado.model.Thread.class)

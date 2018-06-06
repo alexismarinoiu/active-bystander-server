@@ -15,9 +15,9 @@ import java.util.List;
 public class ThreadController {
 
   @RequestMapping(method = RequestMethod.GET)
-  public ResponseEntity<List<Thread>> getAllParticipants(HttpServletRequest givenRequest) {
+  public ResponseEntity<List<Thread>> getAllThreads(HttpServletRequest givenRequest) {
     final AvocadoHttpServletRequest request = new AvocadoHttpServletRequest(givenRequest);
-    return ResponseEntity.ok(Main.databaseManager.getAllThreadIdForUser(request.getUsername()));
+    return ResponseEntity.ok(Main.databaseManager.getAllThreadsForUser(request.getUsername()));
   }
 
   @RequestMapping(value = "/{threadId}", method = RequestMethod.GET)
