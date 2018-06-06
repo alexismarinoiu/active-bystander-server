@@ -15,4 +15,9 @@ public class HibernateQueryAdapter<R> implements DatabaseQuery<R> {
   public List<R> list() {
     return query.list();
   }
+
+  @Override
+  public DatabaseQuery<R> setParameter(String param, String value) {
+    return new HibernateQueryAdapter<>(query.setParameter(param, value));
+  }
 }
