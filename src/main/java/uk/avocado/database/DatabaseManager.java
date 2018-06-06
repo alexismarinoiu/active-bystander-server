@@ -36,10 +36,11 @@ public class DatabaseManager {
 
   public List<Situation> getAllSituations() {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-      return tb.getSession().createQuery("FROM Situation", uk.avocado.model.Situation.class).list().stream()
-             .map(Situation::new)
-             .collect(Collectors.toList());
-      }
+      return tb.getSession().createQuery("FROM Situation", uk.avocado.model.Situation.class).list()
+          .stream()
+          .map(Situation::new)
+          .collect(Collectors.toList());
+    }
   }
 
   public List<Thread> getAllThreadsForUser(String username) {
@@ -56,14 +57,14 @@ public class DatabaseManager {
   public List<Message> getAllMessagesForThread(String username, String threadId) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
       final String query = "FROM Message M WHERE M.threadId = :threadId AND EXISTS " +
-                           "(SELECT P FROM Participant P WHERE P.username = :username AND P.threadId = :threadId) " +
-                           "ORDER BY M.timestamp, M.seq";
+          "(SELECT P FROM Participant P WHERE P.username = :username AND P.threadId = :threadId) " +
+          "ORDER BY M.timestamp, M.seq";
       return tb.getSession().createQuery(query, uk.avocado.model.Message.class)
-               .setParameter("threadId", threadId)
-               .setParameter("username", username)
-               .list().stream()
-               .map(Message::new)
-               .collect(Collectors.toList());
+          .setParameter("threadId", threadId)
+          .setParameter("username", username)
+          .list().stream()
+          .map(Message::new)
+          .collect(Collectors.toList());
     }
   }
 
