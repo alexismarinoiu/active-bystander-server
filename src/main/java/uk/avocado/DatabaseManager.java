@@ -55,7 +55,7 @@ public class DatabaseManager {
   public List<Message> getAllMessagesForThreadIdAndUser(String username, String threadId) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
       final String query = "FROM Message M WHERE M.threadId = :threadId AND EXISTS " +
-                           "(FROM Participant P WHERE P.username = :username AND P.threadId = :threadId) " +
+                           "(SELECT P FROM Participant P WHERE P.username = :username AND P.threadId = :threadId) " +
                            "ORDER BY M.timestamp, M.seq";
       return tb.getSession().createQuery(query, uk.avocado.model.Message.class)
                .setParameter("threadId", threadId)
