@@ -1,14 +1,12 @@
 package uk.avocado;
 
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.criterion.CriteriaQuery;
-import uk.avocado.data.format.*;
-import uk.avocado.data.format.Thread;
-import uk.avocado.model.Status;
+import uk.avocado.data.format.Location;
+import uk.avocado.data.format.Message;
+import uk.avocado.data.format.Participant;
+import uk.avocado.data.format.Situation;
 import uk.avocado.model.User;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,7 +48,7 @@ public class DatabaseManager {
       return tb.getSession().createQuery(query, uk.avocado.model.Participant.class)
           .setParameter("username", username)
           .list().stream()
-          .map(p -> new Participant(p.getThreadId(), p.getUsername()))
+          .map(Participant::new)
           .collect(Collectors.toList());
     }
   }
@@ -61,7 +59,7 @@ public class DatabaseManager {
       return tb.getSession().createQuery(query, uk.avocado.model.Message.class)
                .setParameter("threadId", threadId)
                .list().stream()
-               .map(m -> new Message(m.getSender(), m.getSeq(), m.getTimestamp(), m.getContent(), m.getThreadId()))
+               .map(Message::new)
                .collect(Collectors.toList());
     }
   }

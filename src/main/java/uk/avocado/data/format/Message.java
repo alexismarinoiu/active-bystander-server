@@ -10,12 +10,12 @@ public class Message {
   private String content;
   private String threadId;
 
-  public Message(String sender, int seq, Timestamp timestamp, String content, String threadId) {
-    this.sender = sender;
-    this.seq = seq;
-    this.timestamp = timestamp;
-    this.content = content;
-    this.threadId = threadId;
+  public Message(uk.avocado.model.Message message) {
+    this.sender = message.getSender();
+    this.seq = message.getSeq();
+    this.timestamp = message.getTimestamp();
+    this.content = message.getContent();
+    this.threadId = message.getThreadId();
   }
 
   public String getSender() {

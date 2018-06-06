@@ -5,9 +5,9 @@ public class Participant {
   private String threadId;
   private String username;
 
-  public Participant(String threadId, String username) {
-    this.threadId = threadId;
-    this.username = username;
+  public Participant(uk.avocado.model.Participant participant) {
+    this.threadId = participant.getThreadId();
+    this.username = participant.getUsername();
   }
 
   public String getThreadId() {

@@ -21,7 +21,7 @@ public class Main {
     final Configuration.Type environment = Configuration.getInstance().getCurrent();
 
     final BootstrapServiceRegistry bootstrapRegistry = new BootstrapServiceRegistryBuilder()
-            //.applyIntegrator(new FlywayIntegrator())
+            .applyIntegrator(new FlywayIntegrator())
             .build();
     final StandardServiceRegistry standardRegistry = new StandardServiceRegistryBuilder(bootstrapRegistry).configure("hibernate.cfg.xml").build();
 
