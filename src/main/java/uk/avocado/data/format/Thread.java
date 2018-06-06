@@ -19,11 +19,11 @@ public class Thread {
     this.status = thread.getStatus();
 
     if (status == Status.ACCEPTED) {
-      List<Participant> participants = Main.databaseManager.getParticipantsForThread(threadId);
+      final List<Participant> participants = Main.databaseManager.getParticipantsForThread(threadId);
 
       title = participants.stream().filter(p -> !p.getUsername().equals(username))
                                    .map(Participant::getUsername)
-                                   .collect(Collectors.joining(","));
+                                   .collect(Collectors.joining(", "));
     }
 
   }
@@ -36,4 +36,7 @@ public class Thread {
     return status;
   }
 
+  public String getTitle() {
+    return title;
+  }
 }
