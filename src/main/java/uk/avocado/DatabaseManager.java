@@ -1,9 +1,7 @@
 package uk.avocado;
 
 import org.hibernate.SessionFactory;
-import uk.avocado.data.format.Location;
-import uk.avocado.data.format.Message;
-import uk.avocado.data.format.Situation;
+import uk.avocado.data.format.*;
 import uk.avocado.data.format.Thread;
 import uk.avocado.model.User;
 
@@ -47,7 +45,7 @@ public class DatabaseManager {
       return tb.getSession().createQuery(query, uk.avocado.model.Thread.class)
           .setParameter("username", username)
           .list().stream()
-          .map(Thread::new)
+          .map(t -> new Thread(t, username))
           .collect(Collectors.toList());
     }
   }
@@ -62,6 +60,16 @@ public class DatabaseManager {
                .setParameter("username", username)
                .list().stream()
                .map(Message::new)
+               .collect(Collectors.toList());
+    }
+  }
+
+  public List<Participant> getParticipantsForThread(String threadId) {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      final String query = "FROM Participant P WHERE P.threadId = :threadId";
+      return tb.getSession().createQuery(query, uk.avocado.model.Participant.class)
+               .setParameter("threadId", threadId)
+               .list().stream().map(Participant::new)
                .collect(Collectors.toList());
     }
   }
