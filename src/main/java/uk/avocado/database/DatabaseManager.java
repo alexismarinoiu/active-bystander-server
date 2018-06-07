@@ -130,15 +130,17 @@ public class DatabaseManager {
   public Thread createOrRetrieveThread(String initiatorUsername, String targetUsername)
       throws NoSuchAlgorithmException, UnsupportedEncodingException {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-      final List<String> usernames = new ArrayList<>();;
-      usernames.add(initiatorUsername);
-      usernames.add(targetUsername);
+      final List<String> usernames = Arrays.asList(initiatorUsername, targetUsername);
       final String combined = usernames.stream().sorted().reduce("", String::concat);
+
       final MessageDigest msgDigest = MessageDigest.getInstance("SHA-1");
       msgDigest.update(combined.getBytes("UTF-8"), 0, combined.length());
       final String threadId = DatatypeConverter.printHexBinary(msgDigest.digest());
-      addParticipantWithThreadId(threadId, initiatorUsername);
-      addParticipantWithThreadId(threadId, targetUsername);
+
+      for (final String username : usernames) {
+        addParticipantWithThreadId(threadId, username);
+      }
+
       final String query = "FROM Thread T WHERE T.threadId = :threadId";
       final List<Thread> threads = tb.getSession().createQuery(query, uk.avocado.model.Thread.class)
           .setParameter("threadId", threadId).list().stream()
