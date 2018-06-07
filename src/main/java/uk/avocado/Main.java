@@ -11,6 +11,9 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 
 import java.io.IOException;
 import java.util.HashMap;
+import uk.avocado.database.DatabaseManager;
+import uk.avocado.database.FlywayIntegrator;
+import uk.avocado.database.HibernateSessionFactoryAdapter;
 
 @SpringBootApplication
 public class Main {
@@ -34,7 +37,7 @@ public class Main {
       throw new RuntimeException("Unable to create Session Factory");
     }
 
-    databaseManager = new DatabaseManager(sessionFactory);
+    databaseManager = new DatabaseManager(new HibernateSessionFactoryAdapter(sessionFactory));
 
     new SpringApplicationBuilder()
         .sources(Main.class)

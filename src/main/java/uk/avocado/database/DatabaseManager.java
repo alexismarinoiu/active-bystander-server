@@ -1,18 +1,19 @@
-package uk.avocado;
-
-import org.hibernate.SessionFactory;
-import uk.avocado.data.format.*;
-import uk.avocado.data.format.Thread;
-import uk.avocado.model.User;
+package uk.avocado.database;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import uk.avocado.data.format.Location;
+import uk.avocado.data.format.Message;
+import uk.avocado.data.format.Participant;
+import uk.avocado.data.format.Situation;
+import uk.avocado.data.format.Thread;
+import uk.avocado.model.User;
 
 public class DatabaseManager {
 
-  private final SessionFactory sessionFactory;
+  private final DatabaseSessionFactory sessionFactory;
 
-  public DatabaseManager(final SessionFactory sessionFactory) {
+  public DatabaseManager(final DatabaseSessionFactory sessionFactory) {
     this.sessionFactory = sessionFactory;
   }
 
@@ -25,18 +26,20 @@ public class DatabaseManager {
 
   public List<Location> getAllLocations() {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-      return tb.getSession().createQuery("FROM User", User.class).list().stream()
-              .map(user -> new Location(user.getLatitude(), user.getLongitude(), user.getUsername()))
-              .collect(Collectors.toList());
+      return tb.getSession().createQuery("FROM User", User.class).list()
+          .stream()
+          .map(user -> new Location(user.getLatitude(), user.getLongitude(), user.getUsername()))
+          .collect(Collectors.toList());
     }
   }
 
   public List<Situation> getAllSituations() {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-      return tb.getSession().createQuery("FROM Situation", uk.avocado.model.Situation.class).list().stream()
-             .map(Situation::new)
-             .collect(Collectors.toList());
-      }
+      return tb.getSession().createQuery("FROM Situation", uk.avocado.model.Situation.class).list()
+          .stream()
+          .map(Situation::new)
+          .collect(Collectors.toList());
+    }
   }
 
   public List<Thread> getAllThreadsForUser(String username) {
@@ -53,14 +56,14 @@ public class DatabaseManager {
   public List<Message> getAllMessagesForThread(String username, String threadId) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
       final String query = "FROM Message M WHERE M.threadId = :threadId AND EXISTS " +
-                           "(SELECT P FROM Participant P WHERE P.username = :username AND P.threadId = :threadId) " +
-                           "ORDER BY M.timestamp, M.seq";
+          "(SELECT P FROM Participant P WHERE P.username = :username AND P.threadId = :threadId) " +
+          "ORDER BY M.timestamp, M.seq";
       return tb.getSession().createQuery(query, uk.avocado.model.Message.class)
-               .setParameter("threadId", threadId)
-               .setParameter("username", username)
-               .list().stream()
-               .map(Message::new)
-               .collect(Collectors.toList());
+          .setParameter("threadId", threadId)
+          .setParameter("username", username)
+          .list().stream()
+          .map(Message::new)
+          .collect(Collectors.toList());
     }
   }
 
