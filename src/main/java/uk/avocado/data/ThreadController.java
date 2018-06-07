@@ -2,6 +2,9 @@ package uk.avocado.data;
 
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,11 +28,17 @@ public class ThreadController {
     return ResponseEntity.ok(Main.databaseManager.getAllThreadsForUser(request.getUsername()));
   }
 
-  @RequestMapping(method = RequestMethod.POST)
+  @RequestMapping(method = RequestMethod.PUT)
   public ResponseEntity<Thread> createThread(HttpServletRequest givenRequest,
       @RequestBody Location location) {
     final AvocadoHttpServletRequest request = new AvocadoHttpServletRequest(givenRequest);
-    return ResponseEntity.ok(Main.databaseManager.createThread(request.getUsername(), location.getUsername()));
+    try {
+      return ResponseEntity.ok(Main.databaseManager
+          .createOrRetrieveThread(request.getUsername(), location.getUsername()));
+    } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+      e.printStackTrace();
+      return ResponseEntity.status(500).build();
+    }
   }
 
   @RequestMapping(value = "/{threadId}", method = RequestMethod.GET)

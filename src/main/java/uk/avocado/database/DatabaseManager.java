@@ -127,21 +127,27 @@ public class DatabaseManager {
     }
   }
 
-  public Thread createThread(String initiatorUsername, String targetUsername) {
+  public Thread createOrRetrieveThread(String initiatorUsername, String targetUsername)
+      throws NoSuchAlgorithmException, UnsupportedEncodingException {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-      List<String> listUsernames = new ArrayList<>();
-      listUsernames.add(initiatorUsername);
-      listUsernames.add(targetUsername);
-      String combined = listUsernames.stream().sorted().reduce("", String::concat);
-      MessageDigest msgDigest = MessageDigest.getInstance("SHA-1");
+      final List<String> usernames = new ArrayList<>();
+      usernames.add(initiatorUsername);
+      usernames.add(targetUsername);
+      final String combined = usernames.stream().sorted().reduce("", String::concat);
+      final MessageDigest msgDigest = MessageDigest.getInstance("SHA-1");
       msgDigest.update(combined.getBytes("UTF-8"), 0, combined.length());
-      uk.avocado.model.Thread thread = new uk.avocado.model.Thread(
-          DatatypeConverter.printHexBinary(msgDigest.digest()), Status.HOLDING);
+      final String hash = DatatypeConverter.printHexBinary(msgDigest.digest());
+      final String query = "FROM Thread T WHERE T.threadId = :threadId";
+      final List<Thread> threads = tb.getSession().createQuery(query, uk.avocado.model.Thread.class)
+          .setParameter("threadId", hash).list().stream()
+          .map(t -> new Thread(t, initiatorUsername))
+          .collect(Collectors.toList());
+      if (!threads.isEmpty()) {
+        return threads.get(0);
+      }
+      uk.avocado.model.Thread thread = new uk.avocado.model.Thread(hash, Status.HOLDING);
       tb.getSession().saveOrUpdate(thread);
       return new Thread(thread, initiatorUsername);
-    } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-      e.printStackTrace();
     }
-    return null;
   }
 }
