@@ -1,1 +1,1 @@
-DELETE FROM thread T WHERE T.threadid = 'FD8B7323DC77F487BDF8A3A957668261583E1EAA';
+DELETE FROM participant p WHERE p.threadid = 'aim116' OR p.threadid = 'nv516';

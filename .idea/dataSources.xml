@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="g1727128_u@db.doc.ic.ac.uk" uuid="94a02a2f-d6c1-4215-bbe6-15d50776faf0">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://db.doc.ic.ac.uk:5432/g1727128_u</jdbc-url>
+    </data-source>
+  </component>
+</project>
