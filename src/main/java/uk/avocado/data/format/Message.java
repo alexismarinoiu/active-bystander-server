@@ -10,6 +10,10 @@ public class Message {
   private String content;
   private String threadId;
 
+  public Message() {
+
+  }
+
   public Message(uk.avocado.model.Message message) {
     this.sender = message.getSender();
     this.seq = message.getSeq();

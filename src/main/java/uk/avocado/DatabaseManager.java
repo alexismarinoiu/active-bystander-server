@@ -50,7 +50,7 @@ public class DatabaseManager {
     }
   }
 
-  public List<Message> getAllMessagesForThreadIdAndUser(String username, String threadId) {
+  public List<Message> getAllMessagesForThread(String username, String threadId) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
       final String query = "FROM Message M WHERE M.threadId = :threadId AND EXISTS " +
                            "(SELECT P FROM Participant P WHERE P.username = :username AND P.threadId = :threadId) " +
@@ -71,6 +71,21 @@ public class DatabaseManager {
                .setParameter("threadId", threadId)
                .list().stream().map(Participant::new)
                .collect(Collectors.toList());
+    }
+  }
+
+  public Message getLastMessage(String username, String threadId) {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      final String query = "FROM Message M WHERE M.threadId = :threadId AND EXISTS " +
+                            "(SELECT P FROM Participant P WHERE P.username = :username AND P.threadId = :threadId) " +
+                            "ORDER BY M.timestamp DESC, M.seq";
+      final List<Message> messages = tb.getSession().createQuery(query, uk.avocado.model.Message.class)
+                                                              .setParameter("threadId", threadId)
+                                                              .setParameter("username", username)
+                                                              .setMaxResults(1).list().stream()
+                                                              .map(Message::new)
+                                                              .collect(Collectors.toList());
+      return messages.isEmpty() ? new Message() : messages.get(0);
     }
   }
 }
