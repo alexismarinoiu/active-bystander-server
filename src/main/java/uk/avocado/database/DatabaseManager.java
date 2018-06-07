@@ -95,11 +95,13 @@ public class DatabaseManager {
     }
   }
 
-  public void putMessage(String sender, int sequence, String content, String threadId) {
+  public Message putMessage(String sender, int sequence, String content, String threadId) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-      final Timestamp timestamp = Timestamp.valueOf(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-      final uk.avocado.model.Message message = new uk.avocado.model.Message(sender, sequence, timestamp, content, threadId);
-      tb.getSession().saveOrUpdate(message);
+      final Timestamp timestamp = new Timestamp(new Date().getTime());
+      final uk.avocado.model.Message message =
+              new uk.avocado.model.Message(sender, sequence, timestamp, content, threadId);
+      tb.getSession().save(message);
+      return new Message(message);
     }
   }
 

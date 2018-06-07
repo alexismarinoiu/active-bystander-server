@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import uk.avocado.AvocadoHttpServletRequest;
 import uk.avocado.Main;
 import uk.avocado.data.format.Message;
+import uk.avocado.data.format.SentMessage;
 import uk.avocado.data.format.Thread;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,9 +35,14 @@ public class ThreadController {
     return ResponseEntity.ok(Main.databaseManager.getLastMessage(request.getUsername(), threadId));
   }
 
-  @RequestMapping(method = {RequestMethod.PUT})
-  public ResponseEntity<Message> addLocation(@RequestBody Message message) {
-    Main.databaseManager.putMessage(message.getSender(), message.getSeq(), message.getContent(), message.getThreadId());
-    return ResponseEntity.ok(message);
+  @RequestMapping(value = "/{threadId}", method = {RequestMethod.PUT})
+  public ResponseEntity<Message> sendMessage(HttpServletRequest givenRequest,
+                                             @PathVariable("threadId") String threadId,
+                                             @RequestBody SentMessage message) {
+    final AvocadoHttpServletRequest request = new AvocadoHttpServletRequest(givenRequest);
+
+    // Sender & timestamp are ignored
+    return ResponseEntity.ok(Main.databaseManager.putMessage(request.getUsername(), message.getSeq(),
+            message.getContent(), threadId));
   }
 }
