@@ -1,5 +1,7 @@
 package uk.avocado.database;
 
+import java.io.Serializable;
+
 public interface DatabaseSession {
 
   void close();
@@ -10,4 +12,5 @@ public interface DatabaseSession {
 
   <R> DatabaseQuery<R> createQuery(String query, Class<R> targetClass);
 
+  Serializable save(Object object);
 }

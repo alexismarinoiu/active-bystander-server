@@ -12,8 +12,6 @@ public class HibernateTransactionAdapter implements DatabaseTransaction {
 
   @Override
   public void commit() {
-    if (transaction.isActive()) {
       transaction.commit();
-    }
   }
 }

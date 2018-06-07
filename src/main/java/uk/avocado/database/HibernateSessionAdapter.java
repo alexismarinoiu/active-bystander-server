@@ -2,6 +2,8 @@ package uk.avocado.database;
 
 import org.hibernate.Session;
 
+import java.io.Serializable;
+
 public class HibernateSessionAdapter implements DatabaseSession {
 
   private final Session session;
@@ -17,7 +19,7 @@ public class HibernateSessionAdapter implements DatabaseSession {
 
   @Override
   public DatabaseTransaction beginTransaction() {
-    return new HibernateTransactionAdapter(session.getTransaction());
+    return new HibernateTransactionAdapter(session.beginTransaction());
   }
 
   @Override
@@ -28,5 +30,10 @@ public class HibernateSessionAdapter implements DatabaseSession {
   @Override
   public <R> DatabaseQuery<R> createQuery(String query, Class<R> targetClass) {
     return new HibernateQueryAdapter<>(session.createQuery(query, targetClass));
+  }
+
+  @Override
+  public Serializable save(Object object) {
+    return session.save(object);
   }
 }

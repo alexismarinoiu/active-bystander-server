@@ -2,6 +2,7 @@ package uk.avocado.database;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import org.jmock.Expectations;
@@ -55,6 +56,11 @@ public class DatabaseManagerTest {
             }
           };
         }
+        return null;
+      }
+
+      @Override
+      public Serializable save(Object object) {
         return null;
       }
     };
