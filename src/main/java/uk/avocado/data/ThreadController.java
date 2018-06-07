@@ -42,6 +42,10 @@ public class ThreadController {
     final AvocadoHttpServletRequest request = new AvocadoHttpServletRequest(givenRequest);
 
     // Sender & timestamp are ignored
+    if (!Main.databaseManager.isUserThreadParticipant(request.getUsername(), threadId)) {
+      return ResponseEntity.status(401).build();
+    }
+
     return ResponseEntity.ok(Main.databaseManager.putMessage(request.getUsername(), message.getSeq(),
             message.getContent(), threadId));
   }
