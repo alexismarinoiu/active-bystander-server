@@ -20,4 +20,9 @@ public class HibernateQueryAdapter<R> implements DatabaseQuery<R> {
   public DatabaseQuery<R> setParameter(String param, String value) {
     return new HibernateQueryAdapter<>(query.setParameter(param, value));
   }
+
+  @Override
+  public DatabaseQuery<R> setMaxResults(int maxResults) {
+    return new HibernateQueryAdapter<>(query.setMaxResults(maxResults));
+  }
 }

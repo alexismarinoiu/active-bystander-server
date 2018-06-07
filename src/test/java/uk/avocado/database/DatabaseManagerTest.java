@@ -48,6 +48,11 @@ public class DatabaseManagerTest {
             public DatabaseQuery<R> setParameter(String param, String value) {
               return null;
             }
+
+            @Override
+            public DatabaseQuery<R> setMaxResults(int maxResults) {
+              return null;
+            }
           };
         }
         return null;

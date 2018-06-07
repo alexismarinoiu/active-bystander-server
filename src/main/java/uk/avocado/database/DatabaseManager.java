@@ -1,11 +1,10 @@
 package uk.avocado.database;
 
-import org.hibernate.SessionFactory;
-import uk.avocado.data.format.*;
 import java.util.List;
 import java.util.stream.Collectors;
 import uk.avocado.data.format.Location;
 import uk.avocado.data.format.Message;
+import uk.avocado.data.format.Participant;
 import uk.avocado.data.format.Situation;
 import uk.avocado.data.format.Thread;
 import uk.avocado.model.User;
