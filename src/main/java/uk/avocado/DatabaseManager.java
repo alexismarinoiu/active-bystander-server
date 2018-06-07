@@ -73,4 +73,16 @@ public class DatabaseManager {
                .collect(Collectors.toList());
     }
   }
+
+  public Message getLastMessage(String username, String threadId) {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      final String query = "FROM Message M WHERE M.threadId = :threadId AND EXISTS " +
+                            "(SELECT P FROM Participant P WHERE P.username = :username AND P.threadId = :threadId) " +
+                            "ORDER BY M.timestamp DESC, M.seq";
+      return new Message(tb.getSession().createQuery(query, uk.avocado.model.Message.class)
+                                                              .setParameter("threadId", threadId)
+                                                              .setParameter("username", username)
+                                                              .setMaxResults(1).list().get(0));
+    }
+  }
 }
