@@ -16,6 +16,9 @@ public class Situation {
   @Column(name = "html")
   private String html;
 
+  public Situation() {
+  }
+
   public String getId() {
     return id;
   }

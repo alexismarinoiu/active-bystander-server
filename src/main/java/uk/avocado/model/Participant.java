@@ -21,8 +21,23 @@ public class Participant {
   @Column(name = "username")
   private String username;
 
+  public Participant() {
+  }
+
   public Participant(String threadId, String username) {
     this.threadId = threadId;
+    this.username = username;
+  }
+
+  public void setId(int id) {
+    this.id = id;
+  }
+
+  public void setThreadId(String threadId) {
+    this.threadId = threadId;
+  }
+
+  public void setUsername(String username) {
     this.username = username;
   }
 
@@ -32,5 +47,9 @@ public class Participant {
 
   public String getUsername() {
     return username;
+  }
+
+  public int getId() {
+    return id;
   }
 }
