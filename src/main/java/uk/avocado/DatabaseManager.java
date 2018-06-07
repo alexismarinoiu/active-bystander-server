@@ -79,10 +79,13 @@ public class DatabaseManager {
       final String query = "FROM Message M WHERE M.threadId = :threadId AND EXISTS " +
                             "(SELECT P FROM Participant P WHERE P.username = :username AND P.threadId = :threadId) " +
                             "ORDER BY M.timestamp DESC, M.seq";
-      return new Message(tb.getSession().createQuery(query, uk.avocado.model.Message.class)
+      final List<Message> messages = tb.getSession().createQuery(query, uk.avocado.model.Message.class)
                                                               .setParameter("threadId", threadId)
                                                               .setParameter("username", username)
-                                                              .setMaxResults(1).list().get(0));
+                                                              .setMaxResults(1).list().stream()
+                                                              .map(Message::new)
+                                                              .collect(Collectors.toList());
+      return messages.isEmpty() ? new Message() : messages.get(0);
     }
   }
 }

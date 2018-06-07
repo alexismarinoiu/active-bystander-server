@@ -31,7 +31,6 @@ public class ThreadController {
   public ResponseEntity<Message> getLastMessage(HttpServletRequest givenRequest,
                                                @PathVariable("threadId") String threadId) {
     final AvocadoHttpServletRequest request = new AvocadoHttpServletRequest(givenRequest);
-    Message lastMessage = Main.databaseManager.getLastMessage(request.getUsername(), threadId);
-    return ResponseEntity.ok(lastMessage != null ? lastMessage : new Message());
+    return ResponseEntity.ok(Main.databaseManager.getLastMessage(request.getUsername(), threadId));
   }
 }
