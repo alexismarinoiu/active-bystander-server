@@ -38,4 +38,5 @@ public class Thread {
   public String getTitle() {
     return title;
   }
+
 }
