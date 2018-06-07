@@ -19,6 +19,11 @@ public class Thread {
   @Enumerated(EnumType.STRING)
   private Status status;
 
+  public Thread(String threadId, Status status) {
+    this.threadId = threadId;
+    this.status = status;
+  }
+
   public String getThreadId() {
     return threadId;
   }

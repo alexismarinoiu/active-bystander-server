@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import uk.avocado.AvocadoHttpServletRequest;
 import uk.avocado.Main;
+import uk.avocado.data.format.Location;
 import uk.avocado.data.format.Message;
 import uk.avocado.data.format.SentMessage;
 import uk.avocado.data.format.Thread;
@@ -22,6 +23,13 @@ public class ThreadController {
   public ResponseEntity<List<Thread>> getAllThreads(HttpServletRequest givenRequest) {
     final AvocadoHttpServletRequest request = new AvocadoHttpServletRequest(givenRequest);
     return ResponseEntity.ok(Main.databaseManager.getAllThreadsForUser(request.getUsername()));
+  }
+
+  @RequestMapping(method = RequestMethod.POST)
+  public ResponseEntity<Thread> createThread(HttpServletRequest givenRequest,
+      @RequestBody Location location) {
+    final AvocadoHttpServletRequest request = new AvocadoHttpServletRequest(givenRequest);
+    return ResponseEntity.ok(Main.databaseManager.createThread(request.getUsername(), location.getUsername()));
   }
 
   @RequestMapping(value = "/{threadId}", method = RequestMethod.GET)

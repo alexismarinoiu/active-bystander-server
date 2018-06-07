@@ -2,13 +2,20 @@ package uk.avocado.database;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.xml.bind.DatatypeConverter;
 import uk.avocado.data.format.Location;
 import uk.avocado.data.format.Message;
 import uk.avocado.data.format.Participant;
 import uk.avocado.data.format.Situation;
 import uk.avocado.data.format.Thread;
+import uk.avocado.model.Status;
 import uk.avocado.model.User;
 
 public class DatabaseManager {
@@ -120,4 +127,21 @@ public class DatabaseManager {
     }
   }
 
+  public Thread createThread(String initiatorUsername, String targetUsername) {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      List<String> listUsernames = new ArrayList<>();
+      listUsernames.add(initiatorUsername);
+      listUsernames.add(targetUsername);
+      String combined = listUsernames.stream().sorted().reduce("", String::concat);
+      MessageDigest msgDigest = MessageDigest.getInstance("SHA-1");
+      msgDigest.update(combined.getBytes("UTF-8"), 0, combined.length());
+      uk.avocado.model.Thread thread = new uk.avocado.model.Thread(
+          DatatypeConverter.printHexBinary(msgDigest.digest()), Status.HOLDING);
+      tb.getSession().saveOrUpdate(thread);
+      return new Thread(thread, initiatorUsername);
+    } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
 }
