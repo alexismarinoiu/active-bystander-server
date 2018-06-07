@@ -8,6 +8,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "situation")
 public class Situation {
+
   @Id
   @Column(name = "id")
   private String id;
@@ -17,15 +18,17 @@ public class Situation {
 
   public String getId() {
     return id;
-}
+  }
 
-  public String getHtml() { return html; }
+  public String getHtml() {
+    return html;
+  }
 
   public void setSituation(String id) {
     this.id = id;
-}
+  }
 
   public void setHtml(String html) {
     this.html = html;
-}
+  }
 }
