@@ -27,6 +27,17 @@ public class Message {
   @Column(name = "threadId")
   private String threadId;
 
+  public Message() {
+  }
+
+  public Message(String sender, int seq, Timestamp timestamp, String content, String threadId) {
+    this.sender = sender;
+    this.seq = seq;
+    this.timestamp = timestamp;
+    this.content = content;
+    this.threadId = threadId;
+  }
+
   public String getSender() {
     return sender;
   }

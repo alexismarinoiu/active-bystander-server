@@ -1,5 +1,8 @@
 package uk.avocado.database;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import uk.avocado.data.format.Location;
@@ -91,4 +94,28 @@ public class DatabaseManager {
       return messages.isEmpty() ? new Message() : messages.get(0);
     }
   }
+
+  public boolean isUserThreadParticipant(String username, String threadId) {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      return tb.getSession().createQuery("FROM Participant P WHERE P.username = :username AND P.threadId = :threadId",
+              uk.avocado.model.Participant.class)
+              .setParameter("username", username)
+              .setParameter("threadId", threadId)
+              .setMaxResults(1).list().stream()
+              .map(p -> 1)
+              .reduce((a, b) -> a + b)
+              .orElse(0) == 1;
+    }
+  }
+
+  public Message putMessage(String sender, int sequence, String content, String threadId) {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      final Timestamp timestamp = new Timestamp(new Date().getTime());
+      final uk.avocado.model.Message message =
+              new uk.avocado.model.Message(sender, sequence, timestamp, content, threadId);
+      tb.getSession().save(message);
+      return new Message(message);
+    }
+  }
+
 }

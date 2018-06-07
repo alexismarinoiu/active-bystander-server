@@ -9,8 +9,5 @@
         <module name="active-bystander" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="server" target="1.7" />
-    </bytecodeTargetLevel>
   </component>
 </project>
