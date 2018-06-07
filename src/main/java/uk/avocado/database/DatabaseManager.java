@@ -68,7 +68,7 @@ public class DatabaseManager {
               return 1;
             }
 
-            return ts1.compareTo(ts2);
+            return ts2.compareTo(ts1);
           })
           .map(t -> new Thread(t, username))
           .collect(Collectors.toList());
