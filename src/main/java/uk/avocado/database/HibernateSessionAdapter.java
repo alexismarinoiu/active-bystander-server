@@ -1,8 +1,7 @@
 package uk.avocado.database;
 
-import org.hibernate.Session;
-
 import java.io.Serializable;
+import org.hibernate.Session;
 
 public class HibernateSessionAdapter implements DatabaseSession {
 

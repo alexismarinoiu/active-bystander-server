@@ -1,5 +1,7 @@
 package uk.avocado;
 
+import java.io.IOException;
+import java.util.HashMap;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.BootstrapServiceRegistry;
@@ -8,15 +10,13 @@ import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-
-import java.io.IOException;
-import java.util.HashMap;
 import uk.avocado.database.DatabaseManager;
 import uk.avocado.database.FlywayIntegrator;
 import uk.avocado.database.HibernateSessionFactoryAdapter;
 
 @SpringBootApplication
 public class Main {
+
   public static DatabaseManager databaseManager;
 
   public static void main(String[] args) throws IOException {
@@ -24,9 +24,10 @@ public class Main {
     final Configuration.Type environment = Configuration.getInstance().getCurrent();
 
     final BootstrapServiceRegistry bootstrapRegistry = new BootstrapServiceRegistryBuilder()
-            .applyIntegrator(new FlywayIntegrator())
-            .build();
-    final StandardServiceRegistry standardRegistry = new StandardServiceRegistryBuilder(bootstrapRegistry).configure("hibernate.cfg.xml").build();
+        .applyIntegrator(new FlywayIntegrator())
+        .build();
+    final StandardServiceRegistry standardRegistry = new StandardServiceRegistryBuilder(
+        bootstrapRegistry).configure("hibernate.cfg.xml").build();
 
     final SessionFactory sessionFactory;
     try {

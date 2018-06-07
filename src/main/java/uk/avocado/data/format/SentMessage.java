@@ -1,7 +1,5 @@
 package uk.avocado.data.format;
 
-import java.sql.Timestamp;
-
 public class SentMessage {
 
   private int seq;
