@@ -2,13 +2,20 @@ package uk.avocado.database;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.xml.bind.DatatypeConverter;
 import uk.avocado.data.format.Location;
 import uk.avocado.data.format.Message;
 import uk.avocado.data.format.Participant;
 import uk.avocado.data.format.Situation;
 import uk.avocado.data.format.Thread;
+import uk.avocado.model.Status;
 import uk.avocado.model.User;
 
 public class DatabaseManager {
@@ -120,4 +127,37 @@ public class DatabaseManager {
     }
   }
 
+  public Thread createOrRetrieveThread(String initiatorUsername, String targetUsername)
+      throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      final List<String> usernames = Arrays.asList(initiatorUsername, targetUsername);
+      final String combined = usernames.stream().sorted().reduce("", String::concat);
+
+      final MessageDigest msgDigest = MessageDigest.getInstance("SHA-1");
+      msgDigest.update(combined.getBytes("UTF-8"), 0, combined.length());
+      final String threadId = DatatypeConverter.printHexBinary(msgDigest.digest());
+
+      for (final String username : usernames) {
+        addParticipantWithThreadId(threadId, username);
+      }
+
+      final String query = "FROM Thread T WHERE T.threadId = :threadId";
+      final List<Thread> threads = tb.getSession().createQuery(query, uk.avocado.model.Thread.class)
+          .setParameter("threadId", threadId).list().stream()
+          .map(t -> new Thread(t, initiatorUsername))
+          .collect(Collectors.toList());
+      if (!threads.isEmpty()) {
+        return threads.get(0);
+      }
+      uk.avocado.model.Thread thread = new uk.avocado.model.Thread(threadId, Status.HOLDING);
+      tb.getSession().saveOrUpdate(thread);
+      return new Thread(thread, initiatorUsername);
+    }
+  }
+
+  private void addParticipantWithThreadId(String threadId, String username) {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      tb.getSession().saveOrUpdate(new uk.avocado.model.Participant(threadId, username));
+    }
+  }
 }

@@ -56,3 +56,5 @@ fabric.properties
 /target
 *.orig
 /.idea/codeStyles/codeStyleConfig.xml
+/src/main/java/uk/avocado/database/test.sql
+.idea/sqldialects.xml
