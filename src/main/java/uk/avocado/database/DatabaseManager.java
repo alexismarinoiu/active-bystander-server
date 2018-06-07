@@ -1,5 +1,8 @@
 package uk.avocado.database;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import uk.avocado.data.format.Location;
@@ -91,4 +94,13 @@ public class DatabaseManager {
       return messages.isEmpty() ? new Message() : messages.get(0);
     }
   }
+
+  public void putMessage(String sender, int sequence, String content, String threadId) {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      final Timestamp timestamp = Timestamp.valueOf(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+      final uk.avocado.model.Message message = new uk.avocado.model.Message(sender, sequence, timestamp, content, threadId);
+      tb.getSession().saveOrUpdate(message);
+    }
+  }
+
 }

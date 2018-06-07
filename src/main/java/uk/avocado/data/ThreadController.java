@@ -33,4 +33,10 @@ public class ThreadController {
     final AvocadoHttpServletRequest request = new AvocadoHttpServletRequest(givenRequest);
     return ResponseEntity.ok(Main.databaseManager.getLastMessage(request.getUsername(), threadId));
   }
+
+  @RequestMapping(method = {RequestMethod.PUT})
+  public ResponseEntity<Message> addLocation(@RequestBody Message message) {
+    Main.databaseManager.putMessage(message.getSender(), message.getSeq(), message.getContent(), message.getThreadId());
+    return ResponseEntity.ok(message);
+  }
 }
