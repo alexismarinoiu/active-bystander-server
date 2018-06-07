@@ -1,6 +1,7 @@
 package uk.avocado.database;
 
 import java.sql.Timestamp;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,6 +52,24 @@ public class DatabaseManager {
       return tb.getSession().createQuery(query, uk.avocado.model.Thread.class)
           .setParameter("username", username)
           .list().stream()
+          .sorted((t1, t2) -> {
+            final Timestamp ts1 = getLastMessage(username, t1.getThreadId()).getTimestamp();
+            final Timestamp ts2 = getLastMessage(username, t2.getThreadId()).getTimestamp();
+
+            if (ts1 == null && ts2 == null) {
+              return 0;
+            }
+
+            if (ts1 == null) {
+              return -1;
+            }
+
+            if (ts2 == null) {
+              return 1;
+            }
+
+            return ts1.compareTo(ts2);
+          })
           .map(t -> new Thread(t, username))
           .collect(Collectors.toList());
     }
