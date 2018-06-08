@@ -33,9 +33,9 @@ public class LocationController {
   }
 
   @RequestMapping(method = {RequestMethod.PUT})
-  public ResponseEntity<Location> addLocation(@RequestBody Location location) {
-    Main.databaseManager.addOrCreateUserWithLocation(location.getUsername(), location.getLatitude(),
-        location.getLongitude());
+  public ResponseEntity<Location> addLocation(HttpServletRequest givenRequest, @RequestBody Location location) {
+    final String username = new AvocadoHttpServletRequest(givenRequest).getUsername();
+    Main.databaseManager.addOrCreateUserWithLocation(username, location.getLatitude(), location.getLongitude());
     return ResponseEntity.ok(location);
   }
 
