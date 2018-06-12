@@ -1,13 +1,11 @@
 package uk.avocado.database;
 
 import java.sql.Timestamp;
-import java.util.Date;
+import java.util.*;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.stream.Collectors;
 import javax.xml.bind.DatatypeConverter;
 import uk.avocado.data.format.Location;

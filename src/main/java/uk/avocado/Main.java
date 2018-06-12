@@ -22,9 +22,11 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.core.io.ClassPathResource;
 import uk.avocado.database.DatabaseManager;
+import uk.avocado.database.DatabaseSessionFactory;
 import uk.avocado.database.FlywayIntegrator;
 import uk.avocado.database.HibernateSessionFactoryAdapter;
 import uk.avocado.messaging.MessagingManager;
+import uk.avocado.notifications.DatabaseTokenStore;
 import uk.avocado.notifications.HashMapTokenStore;
 import uk.avocado.notifications.PushNotificationManager;
 
@@ -54,10 +56,11 @@ public class Main {
       throw new RuntimeException("Unable to create Session Factory");
     }
 
-    databaseManager = new DatabaseManager(new HibernateSessionFactoryAdapter(sessionFactory));
+    final DatabaseSessionFactory dbSessionFactory = new HibernateSessionFactoryAdapter(sessionFactory);
+    databaseManager = new DatabaseManager(dbSessionFactory);
 
     // Set up for Notification Delivery
-    pushMan = new PushNotificationManager(environment, new HashMapTokenStore());
+    pushMan = new PushNotificationManager(environment, new DatabaseTokenStore(dbSessionFactory));
     messMan = new MessagingManager(databaseManager, pushMan);
 
     new SpringApplicationBuilder()

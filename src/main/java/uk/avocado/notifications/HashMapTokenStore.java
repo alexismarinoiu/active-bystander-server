@@ -17,9 +17,4 @@ public class HashMapTokenStore implements TokenStore {
   public void setToken(@NotNull String username, @NotNull String token) {
     tokens.put(username, token);
   }
-
-  @Override
-  public boolean hasToken(@NotNull String username) {
-    return tokens.containsKey(username);
-  }
 }

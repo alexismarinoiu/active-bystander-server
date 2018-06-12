@@ -25,11 +25,10 @@ public class User {
   public User() {
   }
 
-  public User(String username, double latitude, double longitude, String apsToken) {
+  public User(String username, double latitude, double longitude) {
     this.username = username;
     this.latitude = latitude;
     this.longitude = longitude;
-    this.apsToken = apsToken;
   }
 
   public void setUsername(String username) {

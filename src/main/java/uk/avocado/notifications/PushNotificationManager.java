@@ -53,12 +53,13 @@ public class PushNotificationManager {
    */
   public boolean send(@NotNull final String username, @NotNull final String payload) {
     // Prerequisites - if not met, return false
-    if (!tokenStore.hasToken(username)) {
+    final String token = tokenStore.getToken(username);
+    if (token == null) {
       return false;
     }
 
     final ApnsPushNotification notification =
-            new SimpleApnsPushNotification(tokenStore.getToken(username), "uk.ac.imperial.Bystander", payload);
+            new SimpleApnsPushNotification(token, "uk.ac.imperial.Bystander", payload);
     apnsClient.sendNotification(notification);
     return true;
   }
