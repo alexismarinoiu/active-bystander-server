@@ -38,6 +38,9 @@ public class MessagingManager {
               .setAlertTitle(String.format("Message from %.20s", thread.getTitle()))
               .setAlertBody(String.format("%.500s", message))
               .setSoundFileName("default")
+              .addCustomProperty("threadId", thread.getThreadId())
+              .addCustomProperty("title", thread.getTitle())
+              .addCustomProperty("status", thread.getStatus().toString())
               .buildWithDefaultMaximumLength();
       pushMan.send(participant.getUsername(), payload);
     }
@@ -64,6 +67,9 @@ public class MessagingManager {
       final String payload = new ApnsPayloadBuilder()
               .setAlertTitle(String.format("%.20s needs your help!", userThread.getTitle()))
               .setSoundFileName("default")
+              .addCustomProperty("threadId", userThread.getThreadId())
+              .addCustomProperty("title", userThread.getTitle())
+              .addCustomProperty("status", userThread.getStatus().toString())
               .buildWithDefaultMaximumLength();
       pushMan.send(participant.getUsername(), payload);
     }
