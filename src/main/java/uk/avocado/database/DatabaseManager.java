@@ -1,13 +1,11 @@
 package uk.avocado.database;
 
-import java.sql.Timestamp;
-import java.util.Comparator;
-import java.util.Date;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
+import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.xml.bind.DatatypeConverter;
@@ -168,7 +166,8 @@ public class DatabaseManager {
       if (!threads.isEmpty()) {
         return threads.get(0);
       }
-      uk.avocado.model.Thread thread = new uk.avocado.model.Thread(threadId, Status.HOLDING);
+      uk.avocado.model.Thread thread = new uk.avocado.model.Thread(threadId, Status.HOLDING,
+          initiatorUsername, new Timestamp(new Date().getTime()));
       tb.getSession().saveOrUpdate(thread);
       return new Thread(thread, initiatorUsername);
     }
