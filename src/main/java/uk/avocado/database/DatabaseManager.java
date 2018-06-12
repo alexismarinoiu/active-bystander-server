@@ -140,15 +140,12 @@ public class DatabaseManager {
 
   public boolean isUserThreadParticipant(String username, String threadId) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-      return tb.getSession()
+      return !tb.getSession()
           .createQuery("FROM Participant P WHERE P.username = :username "
               + "AND P.threadId = :threadId", uk.avocado.model.Participant.class)
           .setParameter("username", username)
           .setParameter("threadId", threadId)
-          .setMaxResults(1).list().stream()
-          .map(p -> 1)
-          .reduce((a, b) -> a + b)
-          .orElse(0) == 1;
+          .setMaxResults(1).list().isEmpty();
     }
   }
 
@@ -262,12 +259,32 @@ public class DatabaseManager {
   private HelpArea getHelpAreaForHelpAreaId(uk.avocado.model.HelpArea h) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
       final String query = "FROM Situation WHERE id = :helpAreaId";
-      uk.avocado.model.Situation situation =  tb.getSession().createQuery(query, uk.avocado.model.Situation.class)
+      uk.avocado.model.Situation situation = tb.getSession()
+          .createQuery(query, uk.avocado.model.Situation.class)
           .setParameter("helpAreaId", h.getSituationId())
           .list().get(0);
-      if (situation == null) return null;
+      if (situation == null)
+        return null;
       return new HelpArea(h.getUsername(), situation.getSituation());
     }
   }
-}
+
+
+  public boolean isUserCreatorOfThread(String username, String threadId) {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      return tb.getSession()
+          .createQuery("FROM Thread T WHERE T.threadId = :threadId",
+              uk.avocado.model.Thread.class)
+          .setParameter("threadId", threadId)
+          .list().get(0).getCreator().equals(username);
+    }
+  }
+
+  public void acceptMessage(String threadId) {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      
+
+    }
+  }
+
 
