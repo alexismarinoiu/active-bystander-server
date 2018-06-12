@@ -50,7 +50,23 @@ public class MessagingManager {
 
   public Thread createThread(final String username, final Location location)
           throws UnsupportedEncodingException, NoSuchAlgorithmException {
-    return databaseManager.createOrRetrieveThread(username, location.getUsername());
+    final Thread thread = databaseManager.createOrRetrieveThread(username, location.getUsername());
+    final List<Participant> otherParticipants = databaseManager.getParticipantsForThreadExcept(thread.getThreadId(), username);
+    // This is kinda terrible
+    for (final Participant participant : otherParticipants) {
+      final uk.avocado.model.Thread databaseThread = databaseManager.getThread(thread.getThreadId());
+      if (databaseThread == null) {
+        continue;
+      }
+
+      final Thread userThread = new Thread(databaseThread, participant.getUsername());
+      final String payload = new ApnsPayloadBuilder()
+              .setAlertTitle(String.format("%.20s needs your help!", userThread.getTitle()))
+              .buildWithDefaultMaximumLength();
+      pushMan.send(participant.getUsername(), payload);
+    }
+
+    return thread;
   }
 
   public List<Message> getAllUserMessagesForThread(final String username, final String threadId) {
