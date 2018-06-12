@@ -26,9 +26,6 @@ import java.util.concurrent.ExecutionException;
 @RequestMapping("/notification")
 public class NotificationController {
 
-  // TEMPORARY FOR TESTING
-  private static Map<String, String> tokens = new HashMap<>();
-
   @RequestMapping(value = "/register", method = {RequestMethod.PUT})
   public ResponseEntity<NotificationRegistration> registerDeviceForNotification(HttpServletRequest givenRequest,
                                                                                 @RequestBody NotificationRegistration registration) {
@@ -36,36 +33,36 @@ public class NotificationController {
 
     // Convert base64 token to base16
     final String token = DatatypeConverter.printHexBinary(Base64.getDecoder().decode(registration.getToken()));
-    tokens.put(request.getUsername(), token);
+    Main.pushMan.register(request.getUsername(), token);
     System.out.println(String.format("Registering %s with token %s!", request.getUsername(), token));
 
     return ResponseEntity.ok(registration);
   }
 
-  @RequestMapping(value = "/debug", method = {RequestMethod.GET})
-  public ResponseEntity<String> dispatchNotification(@RequestParam String username, @RequestParam String message) {
-    final String payload = new ApnsPayloadBuilder()
-            .setAlertBody("DEBUG MESSAGE")
-            .setAlertSubtitle(message)
-            .buildWithDefaultMaximumLength();
-
-    if (!tokens.containsKey(username)) {
-      return ResponseEntity.status(404).body(String.format("Can't find %s", username));
-    }
-
-    final String token = TokenUtil.sanitizeTokenString(tokens.get(username));
-    final ApnsPushNotification notification = new SimpleApnsPushNotification(token, "uk.ac.imperial.Bystander", payload);
-    try {
-      final PushNotificationResponse<ApnsPushNotification> response = Main.apnsClient.sendNotification(notification).get();
-      if (!response.isAccepted()) {
-        return ResponseEntity.status(500).body(String.format("Rejected because %s", response.getRejectionReason()));
-      }
-    } catch (InterruptedException | ExecutionException e) {
-      e.printStackTrace();
-      return ResponseEntity.status(500).body(e.toString());
-    }
-
-    final String out = String.format("Dispatched to %s the message %s", username, message);
-    return ResponseEntity.ok(out);
-  }
+//  @RequestMapping(value = "/debug", method = {RequestMethod.GET})
+//  public ResponseEntity<String> dispatchNotification(@RequestParam String username, @RequestParam String message) {
+//    final String payload = new ApnsPayloadBuilder()
+//            .setAlertBody("DEBUG MESSAGE")
+//            .setAlertSubtitle(message)
+//            .buildWithDefaultMaximumLength();
+//
+//    if (!tokens.containsKey(username)) {
+//      return ResponseEntity.status(404).body(String.format("Can't find %s", username));
+//    }
+//
+//    final String token = TokenUtil.sanitizeTokenString(tokens.get(username));
+//    final ApnsPushNotification notification = new SimpleApnsPushNotification(token, "uk.ac.imperial.Bystander", payload);
+//    try {
+//      final PushNotificationResponse<ApnsPushNotification> response = Main.apnsClient.sendNotification(notification).get();
+//      if (!response.isAccepted()) {
+//        return ResponseEntity.status(500).body(String.format("Rejected because %s", response.getRejectionReason()));
+//      }
+//    } catch (InterruptedException | ExecutionException e) {
+//      e.printStackTrace();
+//      return ResponseEntity.status(500).body(e.toString());
+//    }
+//
+//    final String out = String.format("Dispatched to %s the message %s", username, message);
+//    return ResponseEntity.ok(out);
+//  }
 }

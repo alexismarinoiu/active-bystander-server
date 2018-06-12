@@ -24,12 +24,16 @@ import org.springframework.core.io.ClassPathResource;
 import uk.avocado.database.DatabaseManager;
 import uk.avocado.database.FlywayIntegrator;
 import uk.avocado.database.HibernateSessionFactoryAdapter;
+import uk.avocado.messaging.MessagingManager;
+import uk.avocado.notifications.HashMapTokenStore;
+import uk.avocado.notifications.PushNotificationManager;
 
 @SpringBootApplication
 public class Main {
 
   public static DatabaseManager databaseManager;
-  public static ApnsClient apnsClient;
+  public static PushNotificationManager pushMan;
+  public static MessagingManager messMan;
 
   public static void main(String[] args) throws IOException, InvalidKeyException, NoSuchAlgorithmException, InterruptedException {
 
@@ -52,12 +56,9 @@ public class Main {
 
     databaseManager = new DatabaseManager(new HibernateSessionFactoryAdapter(sessionFactory));
 
+    messMan = new MessagingManager(databaseManager);
     // Set up for Notification Delivery
-    System.out.println("[PENDING] Configuring APNs Client");
-    apnsClient = new ApnsClientBuilder().setApnsServer(environment == Configuration.Type.PRODUCTION ? ApnsClientBuilder.PRODUCTION_APNS_HOST : ApnsClientBuilder.DEVELOPMENT_APNS_HOST)
-            .setSigningKey(ApnsSigningKey.loadFromPkcs8File(new ClassPathResource("aps.p8").getFile(), "QJQGH9NF7F", "2D4SS87B6W"))
-            .build();
-    System.out.println("[DONE] Configuring APNs Client");
+    pushMan = new PushNotificationManager(environment, new HashMapTokenStore());
 
     new SpringApplicationBuilder()
         .sources(Main.class)
@@ -65,10 +66,7 @@ public class Main {
           put("server.port", environment == Configuration.Type.PRODUCTION ? 8080 : 8081);
         }})
         .listeners((ApplicationListener<ContextClosedEvent>) applicationEvent -> {
-          // Allow notifications to be sent before shutting down
-          try {
-            apnsClient.close().await();
-          } catch (InterruptedException e) {}
+          pushMan.shutdown();
         })
         .run(args);
   }
