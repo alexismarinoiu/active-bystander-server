@@ -1,1 +1,0 @@
-DELETE FROM participant p WHERE p.threadid = 'aim116' OR p.threadid = 'nv516';
