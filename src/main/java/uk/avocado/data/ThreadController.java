@@ -3,6 +3,7 @@ package uk.avocado.data;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpStatus;
@@ -93,8 +94,12 @@ public class ThreadController {
   public ResponseEntity<Void> acceptMessage(HttpServletRequest givenRequest,
       @PathVariable("threadId") String threadId) {
     final String username = new AvocadoHttpServletRequest(givenRequest).getUsername();
-    if (!Main.databaseManager.isUserCreatorOfThread(username, threadId)) {
-      return ResponseEntity.status(401).build();
+    try {
+      if (Main.databaseManager.isUserCreatorOfThread(username, threadId)) {
+        return ResponseEntity.status(401).build();
+      }
+    } catch (NoSuchElementException e) {
+      return ResponseEntity.status(404).build();
     }
     Main.databaseManager.acceptMessage(threadId);
     return ResponseEntity.ok().build();

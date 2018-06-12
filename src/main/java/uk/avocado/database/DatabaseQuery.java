@@ -9,4 +9,6 @@ public interface DatabaseQuery<R> {
   DatabaseQuery<R> setParameter(String param, Object value);
 
   DatabaseQuery<R> setMaxResults(int maxResults);
+
+  void executeUpdate();
 }

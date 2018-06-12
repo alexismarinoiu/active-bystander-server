@@ -15,4 +15,6 @@ public interface DatabaseSession {
   <R> DatabaseQuery<R> createQuery(String query, Class<R> targetClass);
 
   Serializable save(Object object);
+
+  DatabaseQuery createQuery(String query);
 }

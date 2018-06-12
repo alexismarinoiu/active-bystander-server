@@ -1,11 +1,13 @@
 package uk.avocado.database;
 
-import java.sql.Timestamp;
-import java.util.*;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import javax.xml.bind.DatatypeConverter;
 
@@ -80,10 +82,10 @@ public class DatabaseManager {
   public uk.avocado.model.Thread getThread(String threadId) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
       return tb.getSession()
-              .createQuery("FROM Thread T WHERE T.threadId = :threadId", uk.avocado.model.Thread.class)
-              .setParameter("threadId", threadId)
-              .setMaxResults(1).list().stream()
-              .findFirst().orElse(null);
+          .createQuery("FROM Thread T WHERE T.threadId = :threadId", uk.avocado.model.Thread.class)
+          .setParameter("threadId", threadId)
+          .setMaxResults(1).list().stream()
+          .findFirst().orElse(null);
     }
   }
 
@@ -113,12 +115,13 @@ public class DatabaseManager {
 
   public List<Participant> getParticipantsForThreadExcept(String threadId, String excludeUser) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-      final String query = "FROM Participant P WHERE P.threadId = :threadId AND P.username <> :excludeUser";
+      final String query = "FROM Participant P WHERE P.threadId = :threadId " +
+          "AND P.username <> :excludeUser";
       return tb.getSession().createQuery(query, uk.avocado.model.Participant.class)
-              .setParameter("threadId", threadId)
-              .setParameter("excludeUser", excludeUser)
-              .list().stream().map(Participant::new)
-              .collect(Collectors.toList());
+          .setParameter("threadId", threadId)
+          .setParameter("excludeUser", excludeUser)
+          .list().stream().map(Participant::new)
+          .collect(Collectors.toList());
     }
   }
 
@@ -209,7 +212,8 @@ public class DatabaseManager {
   private uk.avocado.model.Thread getThread(String threadId, String username) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
       final String query = "FROM Thread T WHERE T.threadId = :threadId AND T.creator = :username";
-      final List<uk.avocado.model.Thread> threads = tb.getSession().createQuery(query, uk.avocado.model.Thread.class)
+      final List<uk.avocado.model.Thread> threads = tb.getSession()
+          .createQuery(query, uk.avocado.model.Thread.class)
           .setParameter("threadId", threadId)
           .setParameter("username", username).list();
       if (!threads.isEmpty()) {
@@ -270,21 +274,26 @@ public class DatabaseManager {
   }
 
 
-  public boolean isUserCreatorOfThread(String username, String threadId) {
+  public boolean isUserCreatorOfThread(String username, String threadId)
+      throws NoSuchElementException {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-      return tb.getSession()
-          .createQuery("FROM Thread T WHERE T.threadId = :threadId",
-              uk.avocado.model.Thread.class)
-          .setParameter("threadId", threadId)
-          .list().get(0).getCreator().equals(username);
+      final uk.avocado.model.Thread thread = getThread(threadId);
+      if (thread == null) {
+        throw new NoSuchElementException();
+      }
+      return thread.getCreator().equals(username);
     }
   }
 
   public void acceptMessage(String threadId) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-      
-
+      final String query = "UPDATE Thread SET status = :status WHERE threadId = :threadId";
+      tb.getSession().createQuery(query)
+          .setParameter("status", Status.ACCEPTED)
+          .setParameter("threadId", threadId)
+          .executeUpdate();
     }
   }
+}
 
 
