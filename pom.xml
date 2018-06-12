@@ -47,16 +47,6 @@
                 <version>5.1.1</version>
             </plugin>
         </plugins>
-
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-                <includes>
-                    <include>aps.p8</include>
-                </includes>
-            </resource>
-        </resources>
     </build>
 
     <dependencies>
