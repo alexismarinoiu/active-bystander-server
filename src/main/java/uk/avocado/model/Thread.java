@@ -1,5 +1,6 @@
 package uk.avocado.model;
 
+import java.sql.Timestamp;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -24,12 +25,20 @@ public class Thread {
   @Type(type = "psqlEnum")
   private Status status;
 
+  @Column(name = "creator")
+  private String creator;
+
+  @Column(name = "timestamp")
+  private Timestamp timestamp;
+
   public Thread() {
   }
 
-  public Thread(String threadId, Status status) {
+  public Thread(String threadId, Status status, String creator, Timestamp timestamp) {
     this.threadId = threadId;
     this.status = status;
+    this.creator = creator;
+    this.timestamp = timestamp;
   }
 
   public void setThreadId(String threadId) {
@@ -48,4 +57,19 @@ public class Thread {
     return status;
   }
 
+  public String getCreator() {
+    return creator;
+  }
+
+  public void setCreator(String creator) {
+    this.creator = creator;
+  }
+
+  public Timestamp getTimestamp() {
+    return timestamp;
+  }
+
+  public void setTimestamp(Timestamp timestamp) {
+    this.timestamp = timestamp;
+  }
 }
