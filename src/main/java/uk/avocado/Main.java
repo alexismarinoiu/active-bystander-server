@@ -56,9 +56,9 @@ public class Main {
 
     databaseManager = new DatabaseManager(new HibernateSessionFactoryAdapter(sessionFactory));
 
-    messMan = new MessagingManager(databaseManager);
     // Set up for Notification Delivery
     pushMan = new PushNotificationManager(environment, new HashMapTokenStore());
+    messMan = new MessagingManager(databaseManager, pushMan);
 
     new SpringApplicationBuilder()
         .sources(Main.class)

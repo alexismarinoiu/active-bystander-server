@@ -1,9 +1,13 @@
 package uk.avocado.messaging;
 
+import com.turo.pushy.apns.util.ApnsPayloadBuilder;
+import uk.avocado.Main;
 import uk.avocado.data.format.Location;
 import uk.avocado.data.format.Message;
+import uk.avocado.data.format.Participant;
 import uk.avocado.data.format.Thread;
 import uk.avocado.database.DatabaseManager;
+import uk.avocado.notifications.PushNotificationManager;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
@@ -11,13 +15,32 @@ import java.util.List;
 
 public class MessagingManager {
 
+  private final PushNotificationManager pushMan;
   private final DatabaseManager databaseManager;
 
-  public MessagingManager(final DatabaseManager databaseManager) {
+  public MessagingManager(final DatabaseManager databaseManager, final PushNotificationManager pushMan) {
     this.databaseManager = databaseManager;
+    this.pushMan = pushMan;
   }
 
   public Message sendMessage(final String username, final int sequenceNumber, final String message, final String threadId) {
+    final List<Participant> otherParticipants = databaseManager.getParticipantsForThreadExcept(threadId, username);
+
+    // Send notifications to users, ignore if they don't have their device registered
+    for (final Participant participant : otherParticipants) {
+      final uk.avocado.model.Thread databaseThread = databaseManager.getThread(threadId);
+      if (databaseThread == null) {
+        continue;
+      }
+
+      final Thread thread = new Thread(databaseThread, participant.getUsername());
+      final String payload = new ApnsPayloadBuilder()
+              .setAlertTitle(String.format("Message from %.20s", thread.getTitle()))
+              .setAlertBody(String.format("%.500s", message))
+              .buildWithDefaultMaximumLength();
+      pushMan.send(participant.getUsername(), payload);
+    }
+
     return databaseManager.putMessage(username, sequenceNumber, message, threadId);
   }
 
