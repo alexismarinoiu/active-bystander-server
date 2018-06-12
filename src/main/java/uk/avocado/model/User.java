@@ -19,6 +19,9 @@ public class User {
   @Column(name = "longitude")
   private double longitude;
 
+  @Column(name = "apsToken")
+  private String apsToken;
+
   public User() {
   }
 
@@ -50,5 +53,13 @@ public class User {
 
   public void setLongitude(double longitude) {
     this.longitude = longitude;
+  }
+
+  public String getApsToken() {
+    return apsToken;
+  }
+
+  public void setApsToken(String apsToken) {
+    this.apsToken = apsToken;
   }
 }

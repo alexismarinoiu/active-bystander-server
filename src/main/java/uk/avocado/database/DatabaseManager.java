@@ -1,12 +1,11 @@
 package uk.avocado.database;
 
+import java.sql.Timestamp;
+import java.util.*;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Timestamp;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.stream.Collectors;
 import javax.xml.bind.DatatypeConverter;
 import uk.avocado.data.format.Location;
@@ -80,6 +79,16 @@ public class DatabaseManager {
     }
   }
 
+  public uk.avocado.model.Thread getThread(String threadId) {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      return tb.getSession()
+              .createQuery("FROM Thread T WHERE T.threadId = :threadId", uk.avocado.model.Thread.class)
+              .setParameter("threadId", threadId)
+              .setMaxResults(1).list().stream()
+              .findFirst().orElse(null);
+    }
+  }
+
   public List<Message> getAllMessagesForThread(String username, String threadId) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
       final String query = "FROM Message M WHERE M.threadId = :threadId AND EXISTS " +
@@ -101,6 +110,17 @@ public class DatabaseManager {
           .setParameter("threadId", threadId)
           .list().stream().map(Participant::new)
           .collect(Collectors.toList());
+    }
+  }
+
+  public List<Participant> getParticipantsForThreadExcept(String threadId, String excludeUser) {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      final String query = "FROM Participant P WHERE P.threadId = :threadId AND P.username <> :excludeUser";
+      return tb.getSession().createQuery(query, uk.avocado.model.Participant.class)
+              .setParameter("threadId", threadId)
+              .setParameter("excludeUser", excludeUser)
+              .list().stream().map(Participant::new)
+              .collect(Collectors.toList());
     }
   }
 
