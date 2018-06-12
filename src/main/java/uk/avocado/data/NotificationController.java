@@ -38,31 +38,4 @@ public class NotificationController {
 
     return ResponseEntity.ok(registration);
   }
-
-//  @RequestMapping(value = "/debug", method = {RequestMethod.GET})
-//  public ResponseEntity<String> dispatchNotification(@RequestParam String username, @RequestParam String message) {
-//    final String payload = new ApnsPayloadBuilder()
-//            .setAlertBody("DEBUG MESSAGE")
-//            .setAlertSubtitle(message)
-//            .buildWithDefaultMaximumLength();
-//
-//    if (!tokens.containsKey(username)) {
-//      return ResponseEntity.status(404).body(String.format("Can't find %s", username));
-//    }
-//
-//    final String token = TokenUtil.sanitizeTokenString(tokens.get(username));
-//    final ApnsPushNotification notification = new SimpleApnsPushNotification(token, "uk.ac.imperial.Bystander", payload);
-//    try {
-//      final PushNotificationResponse<ApnsPushNotification> response = Main.apnsClient.sendNotification(notification).get();
-//      if (!response.isAccepted()) {
-//        return ResponseEntity.status(500).body(String.format("Rejected because %s", response.getRejectionReason()));
-//      }
-//    } catch (InterruptedException | ExecutionException e) {
-//      e.printStackTrace();
-//      return ResponseEntity.status(500).body(e.toString());
-//    }
-//
-//    final String out = String.format("Dispatched to %s the message %s", username, message);
-//    return ResponseEntity.ok(out);
-//  }
 }
