@@ -22,9 +22,8 @@ public class PushNotificationManager {
           throws IOException, InvalidKeyException, NoSuchAlgorithmException {
     this.tokenStore = tokenStore;
     System.out.println("[PENDING] Configuring APNs Client");
-    final File key = new ClassPathResource("aps.p8").getFile();
     apnsClient = new ApnsClientBuilder().setApnsServer(environment == Configuration.Type.PRODUCTION ? ApnsClientBuilder.PRODUCTION_APNS_HOST : ApnsClientBuilder.DEVELOPMENT_APNS_HOST)
-            .setSigningKey(ApnsSigningKey.loadFromPkcs8File(key, "QJQGH9NF7F", "2D4SS87B6W"))
+            .setSigningKey(ApnsSigningKey.loadFromInputStream(new ClassPathResource("aps.p8").getInputStream(), "QJQGH9NF7F", "2D4SS87B6W"))
             .build();
     System.out.println("[DONE] Configuring APNs Client");
   }
