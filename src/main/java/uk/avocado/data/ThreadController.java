@@ -74,7 +74,7 @@ public class ThreadController {
   public ResponseEntity<Thread> deleteThread(HttpServletRequest givenRequest,
                                              @PathVariable("threadId") String threadId) {
     final AvocadoHttpServletRequest request = new AvocadoHttpServletRequest(givenRequest);
-    Thread thread = Main.databaseManager.deleteThread(threadId, request.getUsername());
+    final Thread thread = Main.databaseManager.deleteThread(threadId, request.getUsername());
     if (thread == null) {
       //Thread not found
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

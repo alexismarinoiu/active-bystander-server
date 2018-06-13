@@ -204,7 +204,7 @@ public class DatabaseManager {
     if (thread == null) {
       return null;
     }
-    Thread deletingThread = new Thread(thread, username);
+    final Thread deletingThread = new Thread(thread, username);
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
       tb.getSession().delete(thread);
     }
