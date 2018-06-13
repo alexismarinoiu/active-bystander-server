@@ -7,10 +7,7 @@ import javax.persistence.*;
 public class Situation {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  private int id;
-
-  @Column(name = "situation")
+  @Column(name = "id")
   private String situation;
 
   @Column(name = "html")
