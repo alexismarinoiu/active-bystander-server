@@ -198,4 +198,24 @@ public class DatabaseManager {
       tb.getSession().saveOrUpdate(new uk.avocado.model.Participant(threadId, username));
     }
   }
+
+  public Thread deleteThread(String threadId, String username) {
+    List<uk.avocado.model.Thread> threads = getThreads(threadId, username);
+    if (!threads.isEmpty()) {
+      uk.avocado.model.Thread t = threads.get(0);
+      try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+        tb.getSession().delete(t);
+      }
+      return new Thread(t, username);
+    }
+    return null;
+  }
+
+  private List<uk.avocado.model.Thread> getThreads(String threadId, String username) {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      final String query = "FROM Thread T WHERE T.threadId = :threadId";
+      return tb.getSession().createQuery(query, uk.avocado.model.Thread.class)
+          .setParameter("threadId", threadId).list();
+    }
+  }
 }

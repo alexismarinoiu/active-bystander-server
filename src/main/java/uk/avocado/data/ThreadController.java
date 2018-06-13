@@ -67,4 +67,12 @@ public class ThreadController {
     return ResponseEntity.ok(
             Main.messMan.sendMessage(request.getUsername(), message.getSeq(), message.getContent(), threadId));
   }
+
+
+  @RequestMapping(value = "/{threadId}", method = RequestMethod.DELETE)
+  public ResponseEntity<Thread> deleteThread(HttpServletRequest givenRequest,
+                                             @PathVariable("threadId") String threadId) {
+    final AvocadoHttpServletRequest request = new AvocadoHttpServletRequest(givenRequest);
+    return ResponseEntity.ok(Main.databaseManager.deleteThread(threadId, request.getUsername()));
+  }
 }
