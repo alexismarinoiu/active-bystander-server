@@ -223,4 +223,30 @@ public class DatabaseManager {
       return null;
     }
   }
+
+  public Participant deleteParticipant(String threadId, String username) {
+    final uk.avocado.model.Participant participant = getParticipant(threadId, username);
+    if (participant == null) {
+      return null;
+    }
+    final Participant deletingParticipant = new Participant(participant);
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      tb.getSession().delete(participant);
+    }
+    return deletingParticipant;
+  }
+
+  private uk.avocado.model.Participant getParticipant(String threadId, String username) {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      final String query = "FROM Participant P WHERE username = :username AND threadId = :threadId";
+      final List<uk.avocado.model.Participant> participants =
+          tb.getSession().createQuery(query, uk.avocado.model.Participant.class)
+              .setParameter("threadId", threadId)
+              .setParameter("username", username).list();
+      if (!participants.isEmpty()) {
+        return participants.get(0);
+      }
+      return null;
+    }
+  }
 }

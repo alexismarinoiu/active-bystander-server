@@ -7,16 +7,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uk.avocado.AvocadoHttpServletRequest;
 import uk.avocado.Main;
-import uk.avocado.data.format.Location;
-import uk.avocado.data.format.Message;
-import uk.avocado.data.format.SentMessage;
+import uk.avocado.data.format.*;
 import uk.avocado.data.format.Thread;
 
 @RestController
@@ -80,5 +74,17 @@ public class ThreadController {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
     return ResponseEntity.ok(thread);
+  }
+
+  @RequestMapping(value = "{threadId}/participant", method = RequestMethod.DELETE)
+  public ResponseEntity<Participant> deleteParticipant(HttpServletRequest givenRequest,
+                                                       @PathVariable("threadId") String threadId) {
+    final AvocadoHttpServletRequest request = new AvocadoHttpServletRequest(givenRequest);
+    final Participant participant = Main.databaseManager.deleteParticipant(threadId, request.getUsername());
+    if (participant == null) {
+      //Participant not found
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+    return ResponseEntity.ok(participant);
   }
 }
