@@ -14,4 +14,16 @@ public class HelpArea {
 
   @Column(name = "helpAreaId")
   private int helpAreaId;
+
+  public int getId() {
+    return id;
+  }
+
+  public String getUsername() {
+    return username;
+  }
+
+  public int getHelpAreaId() {
+    return helpAreaId;
+  }
 }
