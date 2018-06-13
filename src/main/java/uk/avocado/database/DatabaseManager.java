@@ -7,7 +7,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.stream.Collectors;
-import javax.management.Query;
 import javax.xml.bind.DatatypeConverter;
 
 import uk.avocado.data.format.*;
@@ -249,10 +248,10 @@ public class DatabaseManager {
     }
   }
 
-  public List<HelpArea> getHelpAreasForUser(String username) {
+  public List<Helparea> getHelpAreasForUser(String username) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-      final String query = "FROM :table WHERE username = :username";
-      return tb.getSession().createQuery(query, uk.avocado.model.HelpArea.class)
+      final String query = "FROM \"helpArea\" WHERE username = :username";
+      return tb.getSession().createQuery(query, uk.avocado.model.Helparea.class)
           .setParameter("table", "helpArea")
           .setParameter("username", username)
           .list().stream()
@@ -261,14 +260,18 @@ public class DatabaseManager {
     }
   }
 
-  private HelpArea getHelpAreaForHelpAreaId(uk.avocado.model.HelpArea h) {
+  private Helparea getHelpAreaForHelpAreaId(uk.avocado.model.Helparea h) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
       final String query = "FROM Situation WHERE id = :helpAreaId";
       uk.avocado.model.Situation situation =  tb.getSession().createQuery(query, uk.avocado.model.Situation.class)
           .setParameter("helpAreaId", Integer.toString(h.getHelpAreaId()))
           .list().get(0);
       if (situation == null) return null;
-      return new HelpArea(h.getUsername(), situation.getSituation());
+      return new Helparea(h.getUsername(), situation.getSituation());
     }
+  }
+
+  public Helparea deleteHelpAreaForUser(String username) {
+    return null;
   }
 }

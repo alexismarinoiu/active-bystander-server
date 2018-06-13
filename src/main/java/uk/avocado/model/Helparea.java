@@ -3,8 +3,8 @@ package uk.avocado.model;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "\"helpArea\"")
-public class HelpArea {
+@Table(name = "helparea")
+public class Helparea {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private int id;
