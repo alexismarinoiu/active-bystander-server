@@ -213,9 +213,10 @@ public class DatabaseManager {
 
   private List<uk.avocado.model.Thread> getThreads(String threadId, String username) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-      final String query = "FROM Thread T WHERE T.threadId = :threadId";
+      final String query = "FROM Thread T WHERE T.threadId = :threadId AND T.creator = :username";
       return tb.getSession().createQuery(query, uk.avocado.model.Thread.class)
-          .setParameter("threadId", threadId).list();
+          .setParameter("threadId", threadId)
+          .setParameter("username", username).list();
     }
   }
 }
