@@ -27,6 +27,11 @@ public class HibernateSessionAdapter implements DatabaseSession {
   }
 
   @Override
+  public void delete(Object object) {
+    session.delete(object);
+  }
+
+  @Override
   public <R> DatabaseQuery<R> createQuery(String query, Class<R> targetClass) {
     return new HibernateQueryAdapter<>(session.createQuery(query, targetClass));
   }
