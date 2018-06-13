@@ -11,10 +11,7 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import javax.xml.bind.DatatypeConverter;
 
-import uk.avocado.data.format.Location;
-import uk.avocado.data.format.Message;
-import uk.avocado.data.format.Participant;
-import uk.avocado.data.format.Situation;
+import uk.avocado.data.format.*;
 import uk.avocado.data.format.Thread;
 import uk.avocado.model.Status;
 import uk.avocado.model.User;
@@ -269,16 +266,31 @@ public class DatabaseManager {
   }
 
   public Object deleteUserFromConversation(String threadId, String username) {
-    final List<uk.avocado.model.Participant> participants = getAllParticipantsForAThread(threadId);
-    if (participants.isEmpty()) {
-      return null;
+    try (TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      final List<uk.avocado.model.Participant> participants = getAllParticipantsForAThread(threadId);
+      if (participants.isEmpty()) {
+        return null;
+      }
+      //Check if the only remaining participant in database is the participant that is deleting the conversation
+      if (participants.size() == 1 && participants.get(0).getUsername().equals(username)) {
+        //Delete all messages, participant and the thread
+        final List<uk.avocado.model.Message> messages = getAllMessagesForTheThread(threadId);
+        for (uk.avocado.model.Message message : messages) {
+          tb.getSession().delete(message);
+        }
+        deleteParticipant(threadId, username);
+        return deleteThread(threadId);
+      }
+      return deleteParticipant(threadId, username);
     }
-    //Check if the only remaining participant in database is the participant that is deleting the conversation
-    if (participants.size() == 1 && participants.get(0).getUsername().equals(username)) {
-      deleteParticipant(threadId, username);
-      return deleteThread(threadId);
+  }
+
+  private List<uk.avocado.model.Message> getAllMessagesForTheThread(String threadId) {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      final String query = "FROM Message M WHERE M.threadId = :threadId";
+      return tb.getSession().createQuery(query, uk.avocado.model.Message.class)
+          .setParameter("threadId", threadId).list();
     }
-    return deleteParticipant(threadId, username);
   }
 
   public List<HelpArea> getHelpAreasForUser(String username) {
