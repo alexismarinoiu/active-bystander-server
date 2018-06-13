@@ -4,6 +4,8 @@ import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -68,11 +70,15 @@ public class ThreadController {
             Main.messMan.sendMessage(request.getUsername(), message.getSeq(), message.getContent(), threadId));
   }
 
-
   @RequestMapping(value = "/{threadId}", method = RequestMethod.DELETE)
   public ResponseEntity<Thread> deleteThread(HttpServletRequest givenRequest,
                                              @PathVariable("threadId") String threadId) {
     final AvocadoHttpServletRequest request = new AvocadoHttpServletRequest(givenRequest);
-    return ResponseEntity.ok(Main.databaseManager.deleteThread(threadId, request.getUsername()));
+    Thread thread = Main.databaseManager.deleteThread(threadId, request.getUsername());
+    if (thread == null) {
+      //Thread not found
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+    return ResponseEntity.ok(thread);
   }
 }
