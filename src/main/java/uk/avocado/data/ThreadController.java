@@ -76,7 +76,7 @@ public class ThreadController {
     return ResponseEntity.ok(thread);
   }
 
-  @RequestMapping(value = "participant/{threadId}", method = RequestMethod.DELETE)
+  @RequestMapping(value = "{threadId}/participant", method = RequestMethod.DELETE)
   public ResponseEntity<Participant> deleteParticipant(HttpServletRequest givenRequest,
                                                        @PathVariable("threadId") String threadId) {
     final AvocadoHttpServletRequest request = new AvocadoHttpServletRequest(givenRequest);
