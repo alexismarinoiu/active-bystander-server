@@ -6,7 +6,7 @@ public class Situation {
   private final String html;
 
   public Situation(uk.avocado.model.Situation situation) {
-    this.id = situation.getId();
+    this.id = situation.getSituation();
     this.html = situation.getHtml();
   }
 
