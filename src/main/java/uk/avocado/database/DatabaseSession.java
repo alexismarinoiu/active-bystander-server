@@ -10,6 +10,8 @@ public interface DatabaseSession {
 
   void saveOrUpdate(Object object);
 
+  void delete(Object object);
+
   <R> DatabaseQuery<R> createQuery(String query, Class<R> targetClass);
 
   Serializable save(Object object);

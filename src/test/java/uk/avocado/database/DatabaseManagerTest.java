@@ -37,6 +37,11 @@ public class DatabaseManagerTest {
       }
 
       @Override
+      public void delete(Object object) {
+
+      }
+
+      @Override
       public <R> DatabaseQuery<R> createQuery(String query, Class<R> targetClass) {
         if (query.equals("FROM User")) {
           return new DatabaseQuery<R>() {
