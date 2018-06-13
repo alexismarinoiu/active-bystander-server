@@ -11,7 +11,10 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import javax.xml.bind.DatatypeConverter;
 
-import uk.avocado.data.format.*;
+import uk.avocado.data.format.Location;
+import uk.avocado.data.format.Message;
+import uk.avocado.data.format.Participant;
+import uk.avocado.data.format.Situation;
 import uk.avocado.data.format.Thread;
 import uk.avocado.model.Status;
 import uk.avocado.model.User;
@@ -197,8 +200,8 @@ public class DatabaseManager {
     }
   }
 
-  public Thread deleteThread(String threadId, String username) {
-    final uk.avocado.model.Thread thread = getThread(threadId, username);
+  public Thread deleteThreadWithUsername(String threadId, String username) {
+    final uk.avocado.model.Thread thread = getThreadWithUsername(threadId, username);
     if (thread == null) {
       return null;
     }
@@ -209,18 +212,27 @@ public class DatabaseManager {
     return deletingThread;
   }
 
-  private uk.avocado.model.Thread getThread(String threadId, String username) {
+  private uk.avocado.model.Thread getThreadWithUsername(String threadId, String username) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
       final String query = "FROM Thread T WHERE T.threadId = :threadId AND T.creator = :username";
-      final List<uk.avocado.model.Thread> threads = tb.getSession()
-          .createQuery(query, uk.avocado.model.Thread.class)
+      return tb.getSession().createQuery(query, uk.avocado.model.Thread.class)
           .setParameter("threadId", threadId)
-          .setParameter("username", username).list();
-      if (!threads.isEmpty()) {
-        return threads.get(0);
-      }
+          .setParameter("username", username)
+          .setMaxResults(1).list().stream()
+          .findFirst().orElse(null);
+    }
+  }
+
+  public Thread deleteThread(String threadId) {
+    final uk.avocado.model.Thread thread = getThread(threadId);
+    if (thread == null) {
       return null;
     }
+    final Thread deletingThread = new Thread(thread, "");
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      tb.getSession().delete(thread);
+    }
+    return deletingThread;
   }
 
   public Participant deleteParticipant(String threadId, String username) {
@@ -238,15 +250,35 @@ public class DatabaseManager {
   private uk.avocado.model.Participant getParticipant(String threadId, String username) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
       final String query = "FROM Participant P WHERE username = :username AND threadId = :threadId";
+      return tb.getSession().createQuery(query, uk.avocado.model.Participant.class)
+          .setParameter("threadId", threadId)
+          .setParameter("username", username)
+          .setMaxResults(1).list().stream()
+          .findFirst().orElse(null);
+    }
+  }
+
+  private List<uk.avocado.model.Participant> getAllParticipantsForAThread(String threadId) {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      final String query = "FROM Participant P WHERE threadId = :threadId";
       final List<uk.avocado.model.Participant> participants =
           tb.getSession().createQuery(query, uk.avocado.model.Participant.class)
-              .setParameter("threadId", threadId)
-              .setParameter("username", username).list();
-      if (!participants.isEmpty()) {
-        return participants.get(0);
-      }
+              .setParameter("threadId", threadId).list();
+      return participants;
+    }
+  }
+
+  public Object deleteUserFromConversation(String threadId, String username) {
+    final List<uk.avocado.model.Participant> participants = getAllParticipantsForAThread(threadId);
+    if (participants.isEmpty()) {
       return null;
     }
+    //Check if the only remaining participant in database is the participant that is deleting the conversation
+    if (participants.size() == 1 && participants.get(0).getUsername().equals(username)) {
+      deleteParticipant(threadId, username);
+      return deleteThread(threadId);
+    }
+    return deleteParticipant(threadId, username);
   }
 
   public List<HelpArea> getHelpAreasForUser(String username) {
