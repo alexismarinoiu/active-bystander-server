@@ -91,7 +91,7 @@ public class ThreadController {
   }
 
   @RequestMapping(value = "/{threadId}/accept", method = RequestMethod.PUT)
-  public ResponseEntity<Void> acceptMessage(HttpServletRequest givenRequest,
+  public ResponseEntity<Thread> acceptThread(HttpServletRequest givenRequest,
       @PathVariable("threadId") String threadId) {
     final String username = new AvocadoHttpServletRequest(givenRequest).getUsername();
     try {
@@ -101,7 +101,6 @@ public class ThreadController {
     } catch (NoSuchElementException e) {
       return ResponseEntity.status(404).build();
     }
-    Main.databaseManager.acceptMessage(threadId);
-    return ResponseEntity.ok().build();
+    return ResponseEntity.ok(Main.databaseManager.acceptThread(threadId));
   }
 }

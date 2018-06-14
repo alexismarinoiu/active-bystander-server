@@ -285,13 +285,16 @@ public class DatabaseManager {
     }
   }
 
-  public void acceptMessage(String threadId) {
+  public Thread acceptThread(String threadId) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-      final String query = "UPDATE Thread SET status = :status WHERE threadId = :threadId";
-      tb.getSession().createQuery(query)
+      final String query = "UPDATE Thread SET status = :status WHERE threadId = :threadId " +
+          "RETURNING *";
+      return tb.getSession().createQuery(query, uk.avocado.model.Thread.class)
           .setParameter("status", Status.ACCEPTED)
           .setParameter("threadId", threadId)
-          .executeUpdate();
+          .list().stream()
+          .map(t -> new Thread(t, t.getCreator()))
+          .findFirst().orElse(null);
     }
   }
 }
