@@ -29,6 +29,7 @@ public class SituationController {
     for (final String category : categoryStrings) {
       categories.add(new Situation() {{
         setTitle(category);
+        setId(0);
         final List<Situation> children = new ArrayList<>();
         for (final uk.avocado.model.Situation situation : situations) {
           if (situation.getGroup().equals(category)) {
@@ -36,6 +37,7 @@ public class SituationController {
               setTitle(situation.getSituation());
               setHtml(situation.getHtml());
               setChildren(new ArrayList<>());
+              setId(situation.getId());
             }});
           }
         }
