@@ -267,8 +267,9 @@ public class DatabaseManager {
           .createQuery(query, uk.avocado.model.Situation.class)
           .setParameter("helpAreaId", h.getSituationId())
           .list().get(0);
-      if (situation == null)
+      if (situation == null) {
         return null;
+      }
       return new HelpArea(h.getUsername(), situation.getSituation());
     }
   }
