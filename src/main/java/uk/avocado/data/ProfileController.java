@@ -86,6 +86,8 @@ public class ProfileController {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
+    System.err.println("IMGPATH: " + path.toString());
+    System.err.println("IMGEXIT: " + path.toFile().exists());
     final String format = validImage(path);
     if (format == null) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
