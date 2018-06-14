@@ -90,13 +90,13 @@ public class ThreadController {
     return ResponseEntity.ok(participant);
   }
 
-  @RequestMapping(value = "{threadId}/message", method = RequestMethod.DELETE)
-  public ResponseEntity deleteConversation(HttpServletRequest givenRequest,
+  @RequestMapping(value = "{threadId}/self", method = RequestMethod.DELETE)
+  public ResponseEntity deleteUserFromConversation(HttpServletRequest givenRequest,
                                               @PathVariable("threadId") String threadId) {
     final AvocadoHttpServletRequest request = new AvocadoHttpServletRequest(givenRequest);
     final Object object = Main.databaseManager.deleteUserFromConversation(threadId, request.getUsername());
     if (object == null) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
     return ResponseEntity.ok(object);
   }
