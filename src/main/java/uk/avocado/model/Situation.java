@@ -21,6 +21,10 @@ public class Situation {
   public Situation() {
   }
 
+  public int getId() {
+    return id;
+  }
+
   public String getSituation() {
     return situation;
   }

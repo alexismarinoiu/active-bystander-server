@@ -71,7 +71,7 @@ public class ProfileController {
 
   @RequestMapping(value = "/helparea", method = {RequestMethod.DELETE})
   public ResponseEntity<HelpArea> deleteHelpAreaForUser(HttpServletRequest givenRequest,
-                                                              @RequestParam(value = "situation") String situation) {
+                                                        @RequestParam(value = "situation") String situation) {
     final String username = new AvocadoHttpServletRequest(givenRequest).getUsername();
     final HelpArea helpArea = Main.databaseManager.deleteHelpAreaForUser(username, situation);
     if (helpArea == null) {
@@ -82,9 +82,10 @@ public class ProfileController {
   }
   @RequestMapping(value = "/helparea", method = {RequestMethod.POST})
   public ResponseEntity<HelpArea> addHelpAreaForUser(HttpServletRequest givenRequest,
-                                              @RequestParam(value = "situation") String situation) {
+                                                     @RequestParam(value = "situation") String situation) {
     final String username = new AvocadoHttpServletRequest(givenRequest).getUsername();
-    return ResponseEntity.ok(Main.databaseManager.addHelpAreaForUser(username, situation));
+    Main.databaseManager.addHelpAreaForUser(username, situation);
+    return ResponseEntity.ok(new HelpArea(username, situation));
   }
 
   @RequestMapping(value = "/image", method = RequestMethod.POST)

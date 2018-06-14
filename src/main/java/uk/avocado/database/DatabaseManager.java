@@ -306,8 +306,15 @@ public class DatabaseManager {
     }
   }
 
-  public HelpArea addHelpAreaForUser(String username, String situation) {
-    return null;
+  public void addHelpAreaForUser(String username, String situation) {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      final String query = "FROM Situation WHERE situation = :situation";
+      List<uk.avocado.model.Situation> situations = tb.getSession()
+          .createQuery(query, uk.avocado.model.Situation.class)
+          .setParameter("situation", situation).list();
+      if (situations.isEmpty()) return;
+      tb.getSession().save(new uk.avocado.model.HelpArea(username, situations.get(0).getId()));
+    }
   }
 }
 
