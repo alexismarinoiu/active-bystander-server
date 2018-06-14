@@ -6,7 +6,7 @@ public interface DatabaseQuery<R> {
 
   List<R> list();
 
-  DatabaseQuery<R> setParameter(String param, String value);
+  DatabaseQuery<R> setParameter(String param, Object value);
 
   DatabaseQuery<R> setMaxResults(int maxResults);
 }
