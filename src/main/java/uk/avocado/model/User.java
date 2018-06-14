@@ -22,6 +22,9 @@ public class User {
   @Column(name = "apsToken")
   private String apsToken;
 
+  @Column(name = "profilePicture")
+  private String profilePicture;
+
   public User() {
   }
 
@@ -61,5 +64,13 @@ public class User {
 
   public void setApsToken(String apsToken) {
     this.apsToken = apsToken;
+  }
+
+  public String getProfilePicture() {
+    return profilePicture;
+  }
+
+  public void setProfilePicture(String profilePicture) {
+    this.profilePicture = profilePicture;
   }
 }
