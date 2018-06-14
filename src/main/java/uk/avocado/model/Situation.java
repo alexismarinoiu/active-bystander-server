@@ -5,13 +5,18 @@ import javax.persistence.*;
 @Entity
 @Table(name = "situation")
 public class Situation {
-
   @Id
-  @Column(name = "id")
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private int id;
+
+  @Column(name = "situation")
   private String situation;
 
   @Column(name = "html")
   private String html;
+
+  @Column(name = "group")
+  private String group;
 
   public Situation() {
   }
@@ -24,11 +29,19 @@ public class Situation {
     return html;
   }
 
-  public void setSituation(String id) {
+  public String getGroup() {
+    return group;
+  }
+
+  public void setSituation(String situation) {
     this.situation = situation;
   }
 
   public void setHtml(String html) {
     this.html = html;
+  }
+
+  public void setGroup(String group) {
+    this.group = group;
   }
 }
