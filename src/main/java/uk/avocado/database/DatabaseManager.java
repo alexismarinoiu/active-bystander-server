@@ -255,37 +255,30 @@ public class DatabaseManager {
       return tb.getSession().createQuery(query, uk.avocado.model.HelpArea.class)
           .setParameter("username", username)
           .list().stream()
-          .map(this::getHelpAreaForHelpAreaId)
+          .map(HelpArea::new)
           .collect(Collectors.toList());
     }
   }
 
-  private HelpArea getHelpAreaForHelpAreaId(uk.avocado.model.HelpArea h) {
+  public HelpArea deleteHelpAreaForUser(String username, int situationId) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-      final String query = "FROM Situation WHERE id = :helpAreaId";
-      uk.avocado.model.Situation situation = tb.getSession()
-          .createQuery(query, uk.avocado.model.Situation.class)
-          .setParameter("helpAreaId", h.getSituationId())
-          .list().get(0);
-      if (situation == null) {
+      final String query = "FROM HelpArea WHERE username = :username AND situationId = :situationId";
+      final List<uk.avocado.model.HelpArea> helpAreas = tb.getSession().createQuery(query, uk.avocado.model.HelpArea.class)
+          .setParameter("username", username)
+          .setParameter("situationId", situationId)
+          .list();
+
+      if (helpAreas.isEmpty()) {
         return null;
       }
-      return new HelpArea(h.getUsername(), situation.getSituation());
+
+      final uk.avocado.model.HelpArea helpArea = helpAreas.get(0);
+      final HelpArea helpAreaData = new HelpArea(helpArea);
+      tb.getSession().delete(helpArea);
+      return helpAreaData;
     }
   }
 
-  public HelpArea deleteHelpAreaForUser(String username, String situation) {
-    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-      final String query = "FROM HelpArea WHERE username = :username " +
-                           "AND situationId = (SELECT S.id FROM Situation S WHERE S.situation = :situation)";
-      List<uk.avocado.model.HelpArea> helpAreas = tb.getSession().createQuery(query, uk.avocado.model.HelpArea.class)
-          .setParameter("username", username)
-          .setParameter("situation", situation)
-          .list();
-      if (helpAreas.isEmpty()) return null;
-      tb.getSession().delete(helpAreas.get(0));
-      return getHelpAreaForHelpAreaId(helpAreas.get(0));
-    }
   public boolean isUserCreatorOfThread(String username, String threadId)
       throws NoSuchElementException {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
@@ -306,14 +299,33 @@ public class DatabaseManager {
     }
   }
 
-  public void addHelpAreaForUser(String username, String situation) {
+  public void addHelpAreaForUser(String username, int situationId) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-      final String query = "FROM Situation WHERE situation = :situation";
-      List<uk.avocado.model.Situation> situations = tb.getSession()
+      final String query = "FROM Situation WHERE id = :situationId";
+      final List<uk.avocado.model.Situation> situations = tb.getSession()
           .createQuery(query, uk.avocado.model.Situation.class)
-          .setParameter("situation", situation).list();
-      if (situations.isEmpty()) return;
+          .setParameter("situationId", situationId).list();
+
+      if (situations.isEmpty()) {
+        return;
+      }
+
       tb.getSession().save(new uk.avocado.model.HelpArea(username, situations.get(0).getId()));
+    }
+  }
+
+  public Situation getSituationForSituationId(int situationId) {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      final String query = "FROM Situation WHERE id = :situationId";
+      final List<uk.avocado.model.Situation> situations = tb.getSession()
+          .createQuery(query, uk.avocado.model.Situation.class)
+          .setParameter("situationId", situationId).list();
+
+      if (situations.isEmpty()) {
+        return null;
+      }
+      return new Situation(situations.get(0));
+
     }
   }
 }

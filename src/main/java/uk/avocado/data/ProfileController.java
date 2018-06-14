@@ -2,16 +2,14 @@ package uk.avocado.data;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartRequest;
 import uk.avocado.AvocadoHttpServletRequest;
 import uk.avocado.Configuration;
 import uk.avocado.Main;
 import uk.avocado.data.format.HelpArea;
 import uk.avocado.data.format.ProfileImage;
+import uk.avocado.data.format.Situation;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -69,11 +67,11 @@ public class ProfileController {
     return ResponseEntity.ok(Main.databaseManager.getHelpAreasForUser(username));
   }
 
-  @RequestMapping(value = "/helparea", method = {RequestMethod.DELETE})
+  @RequestMapping(value = "/helparea/{situationId}", method = {RequestMethod.DELETE})
   public ResponseEntity<HelpArea> deleteHelpAreaForUser(HttpServletRequest givenRequest,
-                                                        @RequestParam(value = "situation") String situation) {
+                                                        @PathVariable(value = "situationId") int situationId) {
     final String username = new AvocadoHttpServletRequest(givenRequest).getUsername();
-    final HelpArea helpArea = Main.databaseManager.deleteHelpAreaForUser(username, situation);
+    final HelpArea helpArea = Main.databaseManager.deleteHelpAreaForUser(username, situationId);
     if (helpArea == null) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
@@ -82,10 +80,10 @@ public class ProfileController {
   }
   @RequestMapping(value = "/helparea", method = {RequestMethod.POST})
   public ResponseEntity<HelpArea> addHelpAreaForUser(HttpServletRequest givenRequest,
-                                                     @RequestParam(value = "situation") String situation) {
+                                                     @RequestBody HelpArea helpArea) {
     final String username = new AvocadoHttpServletRequest(givenRequest).getUsername();
-    Main.databaseManager.addHelpAreaForUser(username, situation);
-    return ResponseEntity.ok(new HelpArea(username, situation));
+    Main.databaseManager.addHelpAreaForUser(username, helpArea.getSituationId());
+    return ResponseEntity.ok(helpArea);
   }
 
   @RequestMapping(value = "/image", method = RequestMethod.POST)
