@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartRequest;
 import uk.avocado.AvocadoHttpServletRequest;
 import uk.avocado.Configuration;
 import uk.avocado.Main;
@@ -19,34 +18,29 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
-import java.util.function.Supplier;
 
 @RestController
 @RequestMapping("/profile")
 public class ProfileController {
 
-  private static Path getStaticPath() {
+  private static Path getEnvironmentPrefix() {
     switch (Configuration.getInstance().getCurrent()) {
       case STAGING:
-        return Paths.get("/var/www/html/staging/static/profile");
+        return Paths.get("/var/www/html/staging");
       case PRODUCTION:
-        return Paths.get("/var/www/html/production/static/profile");
+        return Paths.get("/var/www/html/production");
     }
 
     return null;
   }
 
+  private static Path getStaticProfilePath() {
+    return getEnvironmentPrefix().resolve("static/profile");
+  }
+
   private static String validImage(final Path path) throws IOException {
     // Work out the type of file
-    final File file = path.toFile();
-    System.err.println("X 1: " + file);
-    System.err.println("X 1.1: " + file.exists());
-    final InputStream fis = new FileInputStream(file);
-    System.err.println("X 2: " + fis);
-    final InputStream bis = new BufferedInputStream(fis);
-    System.err.println("X 3: " + bis);
-    final ImageInputStream iis = ImageIO.createImageInputStream(bis);
-    System.err.println("X 4: " + iis);
+    final ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(path.toFile())));
     final Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
     final List<String> formats = new ArrayList<>();
     while (readers.hasNext()) {
@@ -98,10 +92,10 @@ public class ProfileController {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
-    final Path destinationPath = getStaticPath().resolve(String.format("%s.%s", sha1, format));
+    final Path destinationPath = getStaticProfilePath().resolve(String.format("%s.%s", sha1, format));
     Files.move(path, destinationPath, StandardCopyOption.REPLACE_EXISTING);
 
-    final ProfileImage profileImage = new ProfileImage(destinationPath.toString(), sha1);
+    final ProfileImage profileImage = new ProfileImage(getEnvironmentPrefix().relativize(destinationPath).toString(), sha1);
     return ResponseEntity.ok(profileImage);
   }
 }
