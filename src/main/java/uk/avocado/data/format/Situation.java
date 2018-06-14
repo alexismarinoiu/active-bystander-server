@@ -3,12 +3,20 @@ package uk.avocado.data.format;
 import java.util.List;
 
 public class Situation {
-
+  private int id;
   private String title;
   private String html;
   private List<Situation> children;
 
   public Situation() {
+  }
+
+  public int getId(){
+    return id;
+  }
+
+  public void setId(int id) {
+    this.id = id;
   }
 
   public String getTitle() {
