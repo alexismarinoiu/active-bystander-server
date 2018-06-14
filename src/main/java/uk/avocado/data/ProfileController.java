@@ -80,6 +80,12 @@ public class ProfileController {
 
     return ResponseEntity.ok(helpArea);
   }
+  @RequestMapping(value = "/helparea", method = {RequestMethod.POST})
+  public ResponseEntity<HelpArea> addHelpAreaForUser(HttpServletRequest givenRequest,
+                                              @RequestParam(value = "situation") String situation) {
+    final String username = new AvocadoHttpServletRequest(givenRequest).getUsername();
+    return ResponseEntity.ok(Main.databaseManager.addHelpAreaForUser(username, situation));
+  }
 
   @RequestMapping(value = "/image", method = RequestMethod.POST)
   public ResponseEntity<ProfileImage> updateUserProfileImage(HttpServletRequest givenRequest) throws IOException {

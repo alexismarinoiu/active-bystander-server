@@ -305,6 +305,10 @@ public class DatabaseManager {
       return new Thread(thread, username);
     }
   }
+
+  public HelpArea addHelpAreaForUser(String username, String situation) {
+    return null;
+  }
 }
 
 
