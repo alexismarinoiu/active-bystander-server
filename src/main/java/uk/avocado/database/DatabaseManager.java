@@ -197,8 +197,8 @@ public class DatabaseManager {
     }
   }
 
-  public Thread deleteThread(String threadId, String username) {
-    final uk.avocado.model.Thread thread = getThread(threadId, username);
+  public Thread deleteThreadWithUsername(String threadId, String username) {
+    final uk.avocado.model.Thread thread = getThreadWithUsername(threadId, username);
     if (thread == null) {
       return null;
     }
@@ -209,18 +209,27 @@ public class DatabaseManager {
     return deletingThread;
   }
 
-  private uk.avocado.model.Thread getThread(String threadId, String username) {
+  private uk.avocado.model.Thread getThreadWithUsername(String threadId, String username) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
       final String query = "FROM Thread T WHERE T.threadId = :threadId AND T.creator = :username";
-      final List<uk.avocado.model.Thread> threads = tb.getSession()
-          .createQuery(query, uk.avocado.model.Thread.class)
+      return tb.getSession().createQuery(query, uk.avocado.model.Thread.class)
           .setParameter("threadId", threadId)
-          .setParameter("username", username).list();
-      if (!threads.isEmpty()) {
-        return threads.get(0);
-      }
+          .setParameter("username", username)
+          .setMaxResults(1).list().stream()
+          .findFirst().orElse(null);
+    }
+  }
+
+  public Thread deleteThread(String threadId) {
+    final uk.avocado.model.Thread thread = getThread(threadId);
+    if (thread == null) {
       return null;
     }
+    final Thread deletingThread = new Thread(thread, "");
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      tb.getSession().delete(thread);
+    }
+    return deletingThread;
   }
 
   public Participant deleteParticipant(String threadId, String username) {
@@ -238,14 +247,49 @@ public class DatabaseManager {
   private uk.avocado.model.Participant getParticipant(String threadId, String username) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
       final String query = "FROM Participant P WHERE username = :username AND threadId = :threadId";
+      return tb.getSession().createQuery(query, uk.avocado.model.Participant.class)
+          .setParameter("threadId", threadId)
+          .setParameter("username", username)
+          .setMaxResults(1).list().stream()
+          .findFirst().orElse(null);
+    }
+  }
+
+  private List<uk.avocado.model.Participant> getAllParticipantsForAThread(String threadId) {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      final String query = "FROM Participant P WHERE threadId = :threadId";
       final List<uk.avocado.model.Participant> participants =
           tb.getSession().createQuery(query, uk.avocado.model.Participant.class)
-              .setParameter("threadId", threadId)
-              .setParameter("username", username).list();
-      if (!participants.isEmpty()) {
-        return participants.get(0);
+              .setParameter("threadId", threadId).list();
+      return participants;
+    }
+  }
+
+  public Object deleteUserFromConversation(String threadId, String username) {
+    try (TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      final List<uk.avocado.model.Participant> participants = getAllParticipantsForAThread(threadId);
+      if (participants.isEmpty()) {
+        return null;
       }
-      return null;
+      //Check if the only remaining participant in database is the participant that is deleting the conversation
+      if (participants.size() == 1 && participants.get(0).getUsername().equals(username)) {
+        //Delete all messages, participant and the thread
+        final List<uk.avocado.model.Message> messages = getAllMessagesForTheThread(threadId);
+        for (uk.avocado.model.Message message : messages) {
+          tb.getSession().delete(message);
+        }
+        deleteParticipant(threadId, username);
+        return deleteThread(threadId);
+      }
+      return deleteParticipant(threadId, username);
+    }
+  }
+
+  private List<uk.avocado.model.Message> getAllMessagesForTheThread(String threadId) {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      final String query = "FROM Message M WHERE M.threadId = :threadId";
+      return tb.getSession().createQuery(query, uk.avocado.model.Message.class)
+          .setParameter("threadId", threadId).list();
     }
   }
 
@@ -255,22 +299,27 @@ public class DatabaseManager {
       return tb.getSession().createQuery(query, uk.avocado.model.HelpArea.class)
           .setParameter("username", username)
           .list().stream()
-          .map(this::getHelpAreaForHelpAreaId)
+          .map(HelpArea::new)
           .collect(Collectors.toList());
     }
   }
 
-  private HelpArea getHelpAreaForHelpAreaId(uk.avocado.model.HelpArea h) {
+  public HelpArea deleteHelpAreaForUser(String username, int situationId) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-      final String query = "FROM Situation WHERE id = :helpAreaId";
-      uk.avocado.model.Situation situation = tb.getSession()
-          .createQuery(query, uk.avocado.model.Situation.class)
-          .setParameter("helpAreaId", h.getSituationId())
-          .list().get(0);
-      if (situation == null) {
+      final String query = "FROM HelpArea WHERE username = :username AND situationId = :situationId";
+      final List<uk.avocado.model.HelpArea> helpAreas = tb.getSession().createQuery(query, uk.avocado.model.HelpArea.class)
+          .setParameter("username", username)
+          .setParameter("situationId", situationId)
+          .list();
+
+      if (helpAreas.isEmpty()) {
         return null;
       }
-      return new HelpArea(h.getUsername(), situation.getSituation());
+
+      final uk.avocado.model.HelpArea helpArea = helpAreas.get(0);
+      final HelpArea helpAreaData = new HelpArea(helpArea);
+      tb.getSession().delete(helpArea);
+      return helpAreaData;
     }
   }
 
@@ -291,6 +340,36 @@ public class DatabaseManager {
       thread.setStatus(Status.ACCEPTED);
       tb.getSession().saveOrUpdate(thread);
       return new Thread(thread, username);
+    }
+  }
+
+  public void addHelpAreaForUser(String username, int situationId) {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      final String query = "FROM Situation WHERE id = :situationId";
+      final List<uk.avocado.model.Situation> situations = tb.getSession()
+          .createQuery(query, uk.avocado.model.Situation.class)
+          .setParameter("situationId", situationId).list();
+
+      if (situations.isEmpty()) {
+        return;
+      }
+
+      tb.getSession().save(new uk.avocado.model.HelpArea(username, situations.get(0).getId()));
+    }
+  }
+
+  public Situation getSituationForSituationId(int situationId) {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      final String query = "FROM Situation WHERE id = :situationId";
+      final List<uk.avocado.model.Situation> situations = tb.getSession()
+          .createQuery(query, uk.avocado.model.Situation.class)
+          .setParameter("situationId", situationId).list();
+
+      if (situations.isEmpty()) {
+        return null;
+      }
+      return new Situation(situations.get(0));
+
     }
   }
 }

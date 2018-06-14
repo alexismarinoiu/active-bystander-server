@@ -15,6 +15,14 @@ public class HelpArea {
   @Column(name = "situationId")
   private int situationId;
 
+  public HelpArea() {
+  }
+
+  public HelpArea(String username, int situationId) {
+    this.username = username;
+    this.situationId = situationId;
+  }
+
   public int getId() {
     return id;
   }

@@ -69,7 +69,7 @@ public class ThreadController {
   public ResponseEntity<Thread> deleteThread(HttpServletRequest givenRequest,
                                              @PathVariable("threadId") String threadId) {
     final AvocadoHttpServletRequest request = new AvocadoHttpServletRequest(givenRequest);
-    final Thread thread = Main.databaseManager.deleteThread(threadId, request.getUsername());
+    final Thread thread = Main.databaseManager.deleteThreadWithUsername(threadId, request.getUsername());
     if (thread == null) {
       //Thread not found
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -88,6 +88,17 @@ public class ThreadController {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
     return ResponseEntity.ok(participant);
+  }
+
+  @RequestMapping(value = "{threadId}/self", method = RequestMethod.DELETE)
+  public ResponseEntity deleteUserFromConversation(HttpServletRequest givenRequest,
+                                              @PathVariable("threadId") String threadId) {
+    final AvocadoHttpServletRequest request = new AvocadoHttpServletRequest(givenRequest);
+    final Object object = Main.databaseManager.deleteUserFromConversation(threadId, request.getUsername());
+    if (object == null) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+    return ResponseEntity.ok(object);
   }
 
   @RequestMapping(value = "/{threadId}/accept", method = RequestMethod.PUT)

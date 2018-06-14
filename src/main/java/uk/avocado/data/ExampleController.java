@@ -15,5 +15,4 @@ public class ExampleController {
   public ResponseEntity<Example> getExample() {
     return new ResponseEntity<>(new Example(), HttpStatus.OK);
   }
-
 }
