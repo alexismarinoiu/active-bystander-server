@@ -382,6 +382,16 @@ public class DatabaseManager {
       });
     }
   }
+
+  public User getUser(String username) {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      return tb.getSession().createQuery("FROM User WHERE username = :username", User.class)
+              .setParameter("username", username)
+              .setMaxResults(1).list().stream()
+              .findFirst()
+              .orElse(null);
+    }
+  }
 }
 
 

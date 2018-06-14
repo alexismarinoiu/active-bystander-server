@@ -10,7 +10,9 @@ import uk.avocado.AvocadoHttpServletRequest;
 import uk.avocado.Configuration;
 import uk.avocado.Main;
 import uk.avocado.data.format.HelpArea;
+import uk.avocado.data.format.Profile;
 import uk.avocado.data.format.ProfileImage;
+import uk.avocado.model.User;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -59,6 +61,24 @@ public class ProfileController {
     }
 
     return null;
+  }
+
+  @RequestMapping(method = RequestMethod.GET)
+  public ResponseEntity<Profile> getProfile(HttpServletRequest givenRequest) {
+    final AvocadoHttpServletRequest request = new AvocadoHttpServletRequest(givenRequest);
+    final String username = request.getUsername();
+    final Profile.Builder builder = new Profile.Builder();
+    builder.setUsername(username);
+    builder.setDisplayName(username);
+
+    final User user = Main.databaseManager.getUser(request.getUsername());
+    if (user == null) {
+      return ResponseEntity.notFound().build();
+    }
+    builder.setProfileImage(user.getProfilePicture());
+    builder.setHelpAreas(Main.databaseManager.getHelpAreasForUser(username));
+
+    return ResponseEntity.ok(builder.build());
   }
 
   @RequestMapping(value = "/helparea", method = {RequestMethod.GET})
