@@ -25,4 +25,9 @@ public class HibernateQueryAdapter<R> implements DatabaseQuery<R> {
   public DatabaseQuery<R> setMaxResults(int maxResults) {
     return new HibernateQueryAdapter<>(query.setMaxResults(maxResults));
   }
+
+  @Override
+  public void executeUpdate() {
+    query.executeUpdate();
+  }
 }

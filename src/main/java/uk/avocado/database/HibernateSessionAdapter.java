@@ -40,4 +40,9 @@ public class HibernateSessionAdapter implements DatabaseSession {
   public Serializable save(Object object) {
     return session.save(object);
   }
+
+  @Override
+  public DatabaseQuery createQuery(String query) {
+    return new HibernateQueryAdapter(session.createQuery(query));
+  }
 }

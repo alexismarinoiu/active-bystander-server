@@ -59,6 +59,11 @@ public class DatabaseManagerTest {
             public DatabaseQuery<R> setMaxResults(int maxResults) {
               return null;
             }
+
+            @Override
+            public void executeUpdate() {
+
+            }
           };
         }
         return null;
@@ -66,6 +71,11 @@ public class DatabaseManagerTest {
 
       @Override
       public Serializable save(Object object) {
+        return null;
+      }
+
+      @Override
+      public DatabaseQuery createQuery(String query) {
         return null;
       }
     };
