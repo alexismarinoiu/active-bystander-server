@@ -61,7 +61,7 @@ public class ProfileController {
     return null;
   }
 
-  @RequestMapping(value = "/helparea",method = {RequestMethod.GET})
+  @RequestMapping(value = "/helparea", method = {RequestMethod.GET})
   public ResponseEntity<List<HelpArea>> getHelpAreasForUser(HttpServletRequest givenRequest) {
     final String username = new AvocadoHttpServletRequest(givenRequest).getUsername();
     return ResponseEntity.ok(Main.databaseManager.getHelpAreasForUser(username));
@@ -115,7 +115,9 @@ public class ProfileController {
     final Path destinationPath = getStaticProfilePath().resolve(String.format("%s.%s", sha1, format));
     Files.move(path, destinationPath, StandardCopyOption.REPLACE_EXISTING);
 
-    final ProfileImage profileImage = new ProfileImage(getEnvironmentPrefix().relativize(destinationPath).toString(), sha1);
+    final String profileImagePath = getEnvironmentPrefix().relativize(destinationPath).toString();
+    final ProfileImage profileImage = new ProfileImage(profileImagePath);
+    Main.databaseManager.setUserProfilePicture(request.getUsername(), profileImagePath);
     return ResponseEntity.ok(profileImage);
   }
 }

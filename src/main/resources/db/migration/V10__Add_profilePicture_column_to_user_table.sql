@@ -1,0 +1,1 @@
+ALTER TABLE "user" ADD COLUMN profilePicture VARCHAR(500) NULL;
