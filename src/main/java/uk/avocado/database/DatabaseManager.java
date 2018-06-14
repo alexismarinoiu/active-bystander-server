@@ -375,7 +375,8 @@ public class DatabaseManager {
 
   public void setUserProfilePicture(String username, String profilePicture) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-      tb.getSession().createQuery("FROM User WHERE username = :username", User.class).list().stream().forEach(u -> {
+      tb.getSession().createQuery("FROM User WHERE username = :username", User.class)
+              .setParameter("username", username).list().stream().forEach(u -> {
         u.setProfilePicture(profilePicture);
         tb.getSession().saveOrUpdate(u);
       });
