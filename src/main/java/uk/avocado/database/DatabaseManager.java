@@ -273,7 +273,6 @@ public class DatabaseManager {
     }
   }
 
-
   public boolean isUserCreatorOfThread(String username, String threadId)
       throws NoSuchElementException {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
@@ -285,16 +284,12 @@ public class DatabaseManager {
     }
   }
 
-  public Thread acceptThread(String threadId) {
+  public Thread acceptThread(String username, String threadId) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-      final String query = "UPDATE Thread SET status = :status WHERE threadId = :threadId " +
-          "RETURNING *";
-      return tb.getSession().createQuery(query, uk.avocado.model.Thread.class)
-          .setParameter("status", Status.ACCEPTED)
-          .setParameter("threadId", threadId)
-          .list().stream()
-          .map(t -> new Thread(t, t.getCreator()))
-          .findFirst().orElse(null);
+      final uk.avocado.model.Thread thread = getThread(threadId);
+      thread.setStatus(Status.ACCEPTED);
+      tb.getSession().saveOrUpdate(thread);
+      return new Thread(thread, username);
     }
   }
 }

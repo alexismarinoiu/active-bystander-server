@@ -101,6 +101,6 @@ public class ThreadController {
     } catch (NoSuchElementException e) {
       return ResponseEntity.status(404).build();
     }
-    return ResponseEntity.ok(Main.databaseManager.acceptThread(threadId));
+    return ResponseEntity.ok(Main.databaseManager.acceptThread(username, threadId));
   }
 }
