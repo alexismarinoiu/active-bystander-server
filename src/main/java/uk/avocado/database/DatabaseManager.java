@@ -274,6 +274,18 @@ public class DatabaseManager {
     }
   }
 
+  public HelpArea deleteHelpAreaForUser(String username, String situation) {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      final String query = "FROM HelpArea WHERE username = :username " +
+                           "AND situationId = (SELECT S.id FROM Situation S WHERE S.situation = :situation)";
+      List<uk.avocado.model.HelpArea> helpAreas = tb.getSession().createQuery(query, uk.avocado.model.HelpArea.class)
+          .setParameter("username", username)
+          .setParameter("situation", situation)
+          .list();
+      if (helpAreas.isEmpty()) return null;
+      tb.getSession().delete(helpAreas.get(0));
+      return getHelpAreaForHelpAreaId(helpAreas.get(0));
+    }
   public boolean isUserCreatorOfThread(String username, String threadId)
       throws NoSuchElementException {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
