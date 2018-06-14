@@ -39,12 +39,11 @@ public class DatabaseManager {
     }
   }
 
-  public List<Situation> getAllSituations() {
+  public List<uk.avocado.model.Situation> getAllSituations() {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
       return tb.getSession().createQuery("FROM Situation", uk.avocado.model.Situation.class)
           .list()
           .stream()
-          .map(Situation::new)
           .collect(Collectors.toList());
     }
   }
@@ -358,7 +357,7 @@ public class DatabaseManager {
     }
   }
 
-  public Situation getSituationForSituationId(int situationId) {
+  public uk.avocado.model.Situation getSituationForSituationId(int situationId) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
       final String query = "FROM Situation WHERE id = :situationId";
       final List<uk.avocado.model.Situation> situations = tb.getSession()
@@ -368,7 +367,7 @@ public class DatabaseManager {
       if (situations.isEmpty()) {
         return null;
       }
-      return new Situation(situations.get(0));
+      return situations.get(0);
 
     }
   }

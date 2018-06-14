@@ -1,6 +1,7 @@
 package uk.avocado.data.format;
 
 import uk.avocado.Main;
+import uk.avocado.model.Situation;
 
 public class HelpArea {
   private String situation;
