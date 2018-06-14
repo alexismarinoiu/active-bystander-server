@@ -2,21 +2,21 @@ package uk.avocado.data.format;
 
 public class HelpArea {
   private String username;
-  private String helpArea;
+  private String situation;
 
   public HelpArea() {
   }
 
-  public HelpArea(String username, String helpArea) {
+  public HelpArea(String username, String situation) {
     this.username = username;
-    this.helpArea = helpArea;
+    this.situation = situation;
   }
 
   public String getUsername() {
     return username;
   }
 
-  public String getHelpArea() {
-    return helpArea;
+  public String getSituation() {
+    return situation;
   }
 }

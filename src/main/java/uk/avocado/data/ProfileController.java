@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartRequest;
 import uk.avocado.AvocadoHttpServletRequest;
@@ -66,6 +67,18 @@ public class ProfileController {
   public ResponseEntity<List<HelpArea>> getHelpAreasForUser(HttpServletRequest givenRequest) {
     final String username = new AvocadoHttpServletRequest(givenRequest).getUsername();
     return ResponseEntity.ok(Main.databaseManager.getHelpAreasForUser(username));
+  }
+
+  @RequestMapping(value = "/helparea", method = {RequestMethod.DELETE})
+  public ResponseEntity<HelpArea> deleteHelpAreaForUser(HttpServletRequest givenRequest,
+                                                              @RequestParam(value = "situation") String situation) {
+    final String username = new AvocadoHttpServletRequest(givenRequest).getUsername();
+    final HelpArea helpArea = Main.databaseManager.deleteHelpAreaForUser(username, situation);
+    if (helpArea == null) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    return ResponseEntity.ok(helpArea);
   }
 
   @RequestMapping(value = "/image", method = RequestMethod.POST)
