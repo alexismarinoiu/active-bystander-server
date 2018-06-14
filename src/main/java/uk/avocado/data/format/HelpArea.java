@@ -4,6 +4,9 @@ public class HelpArea {
   private String username;
   private String helpArea;
 
+  public HelpArea() {
+  }
+
   public HelpArea(String username, String helpArea) {
     this.username = username;
     this.helpArea = helpArea;
