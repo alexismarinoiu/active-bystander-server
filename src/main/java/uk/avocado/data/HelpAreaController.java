@@ -7,29 +7,28 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import uk.avocado.AvocadoHttpServletRequest;
 import uk.avocado.Main;
-import uk.avocado.data.format.Helparea;
+import uk.avocado.data.format.HelpArea;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
 @RequestMapping("/helparea")
-public class HelpareaController {
+public class HelpAreaController {
   @RequestMapping(method = {RequestMethod.GET})
-  public ResponseEntity<List<Helparea>> getHelpAreasForUser(HttpServletRequest givenRequest) {
+  public ResponseEntity<List<HelpArea>> getHelpAreasForUser(HttpServletRequest givenRequest) {
     final String username = new AvocadoHttpServletRequest(givenRequest).getUsername();
     return ResponseEntity.ok(Main.databaseManager.getHelpAreasForUser(username));
   }
 
   @RequestMapping(method = {RequestMethod.DELETE})
-  public ResponseEntity<Helparea> deleteHelpAreaForUser(HttpServletRequest givenRequest) {
+  public ResponseEntity<HelpArea> deleteHelpAreaForUser(HttpServletRequest givenRequest) {
     final String username = new AvocadoHttpServletRequest(givenRequest).getUsername();
-    final Helparea helparea =  Main.databaseManager.deleteHelpAreaForUser(username);
-    if (helparea == null) {
-      //Participant not found
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    final HelpArea helpArea =  Main.databaseManager.deleteHelpAreaForUser(username);
+    if (helpArea == null) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    return ResponseEntity.ok(helparea);
+    return ResponseEntity.ok(helpArea);
   }
 }

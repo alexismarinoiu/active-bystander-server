@@ -1,10 +1,10 @@
 package uk.avocado.data.format;
 
-public class Helparea {
+public class HelpArea {
   private String username;
   private String helpArea;
 
-  public Helparea(String username, String helpArea) {
+  public HelpArea(String username, String helpArea) {
     this.username = username;
     this.helpArea = helpArea;
   }

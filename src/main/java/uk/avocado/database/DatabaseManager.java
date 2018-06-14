@@ -248,10 +248,10 @@ public class DatabaseManager {
     }
   }
 
-  public List<Helparea> getHelpAreasForUser(String username) {
+  public List<HelpArea> getHelpAreasForUser(String username) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
       final String query = "FROM HelpArea WHERE username = :username";
-      return tb.getSession().createQuery(query, uk.avocado.model.Helparea.class)
+      return tb.getSession().createQuery(query, uk.avocado.model.HelpArea.class)
           .setParameter("table", "helpArea")
           .setParameter("username", username)
           .list().stream()
@@ -260,25 +260,25 @@ public class DatabaseManager {
     }
   }
 
-  private Helparea getHelpAreaForHelpAreaId(uk.avocado.model.Helparea h) {
+  private HelpArea getHelpAreaForHelpAreaId(uk.avocado.model.HelpArea h) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
       final String query = "FROM Situation WHERE id = :helpAreaId";
       uk.avocado.model.Situation situation =  tb.getSession().createQuery(query, uk.avocado.model.Situation.class)
           .setParameter("helpAreaId", Integer.toString(h.getHelpAreaId()))
           .list().get(0);
       if (situation == null) return null;
-      return new Helparea(h.getUsername(), situation.getSituation());
+      return new HelpArea(h.getUsername(), situation.getSituation());
     }
   }
 
-  public Helparea deleteHelpAreaForUser(String username) {
+  public HelpArea deleteHelpAreaForUser(String username) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-      final String query = "FROM Helparea WHERE username = :username";
+      final String query = "FROM HelpArea WHERE username = :username";
       uk.avocado.model.Situation situation =  tb.getSession().createQuery(query, uk.avocado.model.Situation.class)
           .setParameter("username", username)
           .list().get(0);
       if (situation == null) return null;
-      return new Helparea(username, situation.getSituation());
+      return new HelpArea(username, situation.getSituation());
     }
   }
 }
