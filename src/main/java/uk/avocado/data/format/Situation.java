@@ -1,26 +1,37 @@
 package uk.avocado.data.format;
 
+import java.util.List;
+
 public class Situation {
 
-  private final String situation;
-  private final String html;
-  private final String group;
+  private String title;
+  private String html;
+  private List<Situation> children;
 
-  public Situation(uk.avocado.model.Situation situation) {
-    this.situation = situation.getSituation();
-    this.html = situation.getHtml();
-    this.group = situation.getGroup();
+  public Situation() {
   }
 
-  public String getSituation() {
-    return situation;
+  public String getTitle() {
+    return title;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
   }
 
   public String getHtml() {
     return html;
   }
 
-  public String getGroup() {
-    return group;
+  public void setHtml(String html) {
+    this.html = html;
+  }
+
+  public List<Situation> getChildren() {
+    return children;
+  }
+
+  public void setChildren(List<Situation> children) {
+    this.children = children;
   }
 }
