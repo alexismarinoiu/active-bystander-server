@@ -10,8 +10,11 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import javax.xml.bind.DatatypeConverter;
-
-import uk.avocado.data.format.*;
+import uk.avocado.data.format.HelpArea;
+import uk.avocado.data.format.Location;
+import uk.avocado.data.format.Message;
+import uk.avocado.data.format.Participant;
+import uk.avocado.data.format.Situation;
 import uk.avocado.data.format.Thread;
 import uk.avocado.model.Status;
 import uk.avocado.model.User;
@@ -210,13 +213,18 @@ public class DatabaseManager {
 
   private uk.avocado.model.Thread getThreadWithUsername(String threadId, String username) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-      final String query = "FROM Thread T WHERE T.threadId = :threadId AND T.creator = :username";
-      return tb.getSession().createQuery(query, uk.avocado.model.Thread.class)
-          .setParameter("threadId", threadId)
-          .setParameter("username", username)
-          .setMaxResults(1).list().stream()
-          .findFirst().orElse(null);
+      return getThreadWithUsername(tb, threadId, username);
     }
+  }
+
+  private uk.avocado.model.Thread getThreadWithUsername(TransactionBlock tb, String threadId,
+      String username) {
+    final String query = "FROM Thread T WHERE T.threadId = :threadId AND T.creator = :username";
+    return tb.getSession().createQuery(query, uk.avocado.model.Thread.class)
+        .setParameter("threadId", threadId)
+        .setParameter("username", username)
+        .setMaxResults(1).list().stream()
+        .findFirst().orElse(null);
   }
 
   public Thread deleteThread(String threadId) {
@@ -257,30 +265,25 @@ public class DatabaseManager {
   private List<uk.avocado.model.Participant> getAllParticipantsForAThread(String threadId) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
       final String query = "FROM Participant P WHERE threadId = :threadId";
-      final List<uk.avocado.model.Participant> participants =
-          tb.getSession().createQuery(query, uk.avocado.model.Participant.class)
-              .setParameter("threadId", threadId).list();
-      return participants;
+      return tb.getSession().createQuery(query, uk.avocado.model.Participant.class)
+          .setParameter("threadId", threadId).list();
     }
   }
 
-  public Object deleteUserFromConversation(String threadId, String username) {
+  public Thread removeUserFromThread(String threadId, String username) {
     try (TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      deleteParticipant(threadId, username);
+      final uk.avocado.model.Thread thread = getThread(threadId);
+      // Check if no other participants are left for the thread
       final List<uk.avocado.model.Participant> participants = getAllParticipantsForAThread(threadId);
       if (participants.isEmpty()) {
-        return null;
-      }
-      //Check if the only remaining participant in database is the participant that is deleting the conversation
-      if (participants.size() == 1 && participants.get(0).getUsername().equals(username)) {
-        //Delete all messages, participant and the thread
         final List<uk.avocado.model.Message> messages = getAllMessagesForTheThread(threadId);
+        // Delete all messages, participant and the thread
         for (uk.avocado.model.Message message : messages) {
           tb.getSession().delete(message);
         }
-        deleteParticipant(threadId, username);
-        return deleteThread(threadId);
       }
-      return deleteParticipant(threadId, username);
+      return new Thread(thread, username);
     }
   }
 
@@ -385,10 +388,10 @@ public class DatabaseManager {
   public User getUser(String username) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
       return tb.getSession().createQuery("FROM User WHERE username = :username", User.class)
-              .setParameter("username", username)
-              .setMaxResults(1).list().stream()
-              .findFirst()
-              .orElse(null);
+          .setParameter("username", username)
+          .setMaxResults(1).list().stream()
+          .findFirst()
+          .orElse(null);
     }
   }
 }
