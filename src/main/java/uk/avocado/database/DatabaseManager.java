@@ -263,7 +263,7 @@ public class DatabaseManager {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
       final String query = "FROM Situation WHERE id = :helpAreaId";
       uk.avocado.model.Situation situation =  tb.getSession().createQuery(query, uk.avocado.model.Situation.class)
-          .setParameter("helpAreaId", h.getHelpAreaId())
+          .setParameter("helpAreaId", h.getSituationId())
           .list().get(0);
       if (situation == null) return null;
       return new HelpArea(h.getUsername(), situation.getSituation());

@@ -12,8 +12,8 @@ public class HelpArea {
   @Column(name = "username")
   private String username;
 
-  @Column(name = "helpAreaId")
-  private int helpAreaId;
+  @Column(name = "situationId")
+  private int situationId;
 
   public int getId() {
     return id;
@@ -23,7 +23,7 @@ public class HelpArea {
     return username;
   }
 
-  public int getHelpAreaId() {
-    return helpAreaId;
+  public int getSituationId() {
+    return situationId;
   }
 }
