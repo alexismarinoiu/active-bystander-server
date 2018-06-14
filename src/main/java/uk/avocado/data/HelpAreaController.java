@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
-@RequestMapping("/helparea")
+@RequestMapping("/profile")
 public class HelpAreaController {
   @RequestMapping(method = {RequestMethod.GET})
   public ResponseEntity<List<HelpArea>> getHelpAreasForUser(HttpServletRequest givenRequest) {
