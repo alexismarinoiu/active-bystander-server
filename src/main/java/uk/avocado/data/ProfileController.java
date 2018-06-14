@@ -12,26 +12,48 @@ import uk.avocado.Main;
 import uk.avocado.data.format.HelpArea;
 import uk.avocado.data.format.ProfileImage;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.nio.file.*;
+import java.util.*;
 import java.util.function.Supplier;
 
 @RestController
 @RequestMapping("/profile")
 public class ProfileController {
 
-  private static Path getStaticPrefix() {
+  private static Path getStaticPath() {
     switch (Configuration.getInstance().getCurrent()) {
       case STAGING:
-        return Paths.get("/var/www/html/staging");
+        return Paths.get("/var/www/html/staging/static/profile");
       case PRODUCTION:
-        return Paths.get("/var/www/html/production");
+        return Paths.get("/var/www/html/production/static/profile");
+    }
+
+    return null;
+  }
+
+  private static String validImage(final Path path) throws IOException {
+    // Work out the type of file
+    final ImageInputStream iis = ImageIO.createImageInputStream(path.toFile());
+    final Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
+    final List<String> formats = new ArrayList<>();
+    while (readers.hasNext()) {
+      final ImageReader reader = readers.next();
+      formats.add(reader.getFormatName().toLowerCase());
+    }
+
+    // Only png and jpeg are considered valid
+    if (formats.contains("png")) {
+      return "png";
+    }
+
+    if (formats.contains("jpeg")) {
+      return "jpeg";
     }
 
     return null;
@@ -64,7 +86,15 @@ public class ProfileController {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
-    final ProfileImage profileImage = new ProfileImage(path.relativize(getStaticPrefix()).toString(), sha1);
+    final String format = validImage(path);
+    if (format == null) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
+    final Path destinationPath = getStaticPath().resolve(String.format("%s.%s", sha1, format));
+    Files.move(path, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+
+    final ProfileImage profileImage = new ProfileImage(destinationPath.toString(), sha1);
     return ResponseEntity.ok(profileImage);
   }
 }
