@@ -16,7 +16,9 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.*;
@@ -39,7 +41,8 @@ public class ProfileController {
 
   private static String validImage(final Path path) throws IOException {
     // Work out the type of file
-    final ImageInputStream iis = ImageIO.createImageInputStream(path.toFile());
+    final ImageInputStream iis = ImageIO.createImageInputStream(
+            new BufferedInputStream(new FileInputStream(path.toFile())));
     final Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
     final List<String> formats = new ArrayList<>();
     while (readers.hasNext()) {
@@ -86,8 +89,6 @@ public class ProfileController {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
-    System.err.println("IMGPATH: " + path.toString());
-    System.err.println("IMGEXIT: " + path.toFile().exists());
     final String format = validImage(path);
     if (format == null) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
