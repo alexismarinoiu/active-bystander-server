@@ -20,15 +20,4 @@ public class HelpAreaController {
     final String username = new AvocadoHttpServletRequest(givenRequest).getUsername();
     return ResponseEntity.ok(Main.databaseManager.getHelpAreasForUser(username));
   }
-
-  @RequestMapping(method = {RequestMethod.DELETE})
-  public ResponseEntity<HelpArea> deleteHelpAreaForUser(HttpServletRequest givenRequest) {
-    final String username = new AvocadoHttpServletRequest(givenRequest).getUsername();
-    final HelpArea helpArea =  Main.databaseManager.deleteHelpAreaForUser(username);
-    if (helpArea == null) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-    }
-
-    return ResponseEntity.ok(helpArea);
-  }
 }

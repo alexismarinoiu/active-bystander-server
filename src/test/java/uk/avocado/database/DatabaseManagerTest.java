@@ -51,7 +51,7 @@ public class DatabaseManagerTest {
             }
 
             @Override
-            public DatabaseQuery<R> setParameter(String param, String value) {
+            public DatabaseQuery<R> setParameter(String param, Object value) {
               return null;
             }
 

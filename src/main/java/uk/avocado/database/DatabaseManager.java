@@ -252,7 +252,6 @@ public class DatabaseManager {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
       final String query = "FROM HelpArea WHERE username = :username";
       return tb.getSession().createQuery(query, uk.avocado.model.HelpArea.class)
-          .setParameter("table", "helpArea")
           .setParameter("username", username)
           .list().stream()
           .map(this::getHelpAreaForHelpAreaId)
@@ -264,21 +263,10 @@ public class DatabaseManager {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
       final String query = "FROM Situation WHERE id = :helpAreaId";
       uk.avocado.model.Situation situation =  tb.getSession().createQuery(query, uk.avocado.model.Situation.class)
-          .setParameter("helpAreaId", Integer.toString(h.getHelpAreaId()))
+          .setParameter("helpAreaId", h.getHelpAreaId())
           .list().get(0);
       if (situation == null) return null;
       return new HelpArea(h.getUsername(), situation.getSituation());
-    }
-  }
-
-  public HelpArea deleteHelpAreaForUser(String username) {
-    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-      final String query = "FROM HelpArea WHERE username = :username";
-      uk.avocado.model.Situation situation =  tb.getSession().createQuery(query, uk.avocado.model.Situation.class)
-          .setParameter("username", username)
-          .list().get(0);
-      if (situation == null) return null;
-      return new HelpArea(username, situation.getSituation());
     }
   }
 }
