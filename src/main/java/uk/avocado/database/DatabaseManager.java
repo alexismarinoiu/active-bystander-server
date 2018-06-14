@@ -250,7 +250,7 @@ public class DatabaseManager {
 
   public List<Helparea> getHelpAreasForUser(String username) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-      final String query = "FROM \"helpArea\" WHERE username = :username";
+      final String query = "FROM HelpArea WHERE username = :username";
       return tb.getSession().createQuery(query, uk.avocado.model.Helparea.class)
           .setParameter("table", "helpArea")
           .setParameter("username", username)
@@ -272,6 +272,14 @@ public class DatabaseManager {
   }
 
   public Helparea deleteHelpAreaForUser(String username) {
-    return null;
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      final String query = "FROM Helparea WHERE username = :username";
+      uk.avocado.model.Situation situation =  tb.getSession().createQuery(query, uk.avocado.model.Situation.class)
+          .setParameter("username", username)
+          .list().get(0);
+      if (situation == null) return null;
+      return new Helparea(username, situation.getSituation());
+    }
   }
 }
+
