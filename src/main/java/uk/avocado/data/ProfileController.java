@@ -14,8 +14,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/profile")
-public class HelpAreaController {
-  @RequestMapping(method = {RequestMethod.GET})
+public class ProfileController {
+  @RequestMapping(value = "/helparea",method = {RequestMethod.GET})
   public ResponseEntity<List<HelpArea>> getHelpAreasForUser(HttpServletRequest givenRequest) {
     final String username = new AvocadoHttpServletRequest(givenRequest).getUsername();
     return ResponseEntity.ok(Main.databaseManager.getHelpAreasForUser(username));
