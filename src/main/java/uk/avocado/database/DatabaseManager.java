@@ -290,6 +290,7 @@ public class DatabaseManager {
         for (uk.avocado.model.Message message : messages) {
           tb.getSession().delete(message);
         }
+        tb.getSession().delete(thread);
       }
       return new Thread(thread, username);
     }
