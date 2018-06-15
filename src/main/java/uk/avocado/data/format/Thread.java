@@ -11,7 +11,7 @@ public class Thread {
 
   private final String threadId;
   private final Status status;
-  private final String title;
+  private String title;
   private final boolean creator;
   private final String threadImage;
 
@@ -25,6 +25,10 @@ public class Thread {
           .getParticipantsForThread(threadId);
       title = participants.stream().filter(p -> !p.getUsername().equals(username))
               .map(Participant::getUsername).collect(Collectors.joining(", "));
+      if (title.trim().length() == 0) {
+        title = "(Nobody)";
+      }
+
       threadImage = participants.stream().filter(p -> !p.getUsername().equals(username)).findFirst()
               .map(p -> Main.databaseManager.getUser(p.getUsername()).getProfilePicture())
               .orElse(null);
