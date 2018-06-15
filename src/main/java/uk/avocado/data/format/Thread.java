@@ -40,4 +40,7 @@ public class Thread {
     return title;
   }
 
+  public boolean isCreator() {
+    return isCreator;
+  }
 }
