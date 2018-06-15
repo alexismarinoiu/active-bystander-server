@@ -29,7 +29,15 @@ public class DatabaseManager {
 
   public void addOrCreateUserWithLocation(String username, double latitude, double longitude) {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-      tb.getSession().saveOrUpdate(new User(username, latitude, longitude));
+      User user = getUser(username);
+      if (user == null) {
+        user = new User(username, latitude, longitude);
+      } else {
+        user.setLatitude(latitude);
+        user.setLongitude(longitude);
+      }
+
+      tb.getSession().saveOrUpdate(user);
     }
   }
 
