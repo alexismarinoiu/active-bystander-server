@@ -12,20 +12,20 @@ public class Thread {
   private final String threadId;
   private final Status status;
   private final String title;
-  private final boolean isCreator;
+  private final boolean creator;
   private final String threadImage;
 
   public Thread(uk.avocado.model.Thread thread, String username) {
     this.threadId = thread.getThreadId();
     this.status = thread.getStatus();
-    this.isCreator = username.equals(thread.getCreator());
+    this.creator = username.equals(thread.getCreator());
 
     if (status == Status.ACCEPTED) {
       final List<Participant> participants = Main.databaseManager
           .getParticipantsForThread(threadId);
-      final Stream<Participant> filtered = participants.stream().filter(p -> !p.getUsername().equals(username));
-      title = filtered.map(Participant::getUsername).collect(Collectors.joining(", "));
-      threadImage = filtered.findFirst()
+      title = participants.stream().filter(p -> !p.getUsername().equals(username))
+              .map(Participant::getUsername).collect(Collectors.joining(", "));
+      threadImage = participants.stream().filter(p -> !p.getUsername().equals(username)).findFirst()
               .map(p -> Main.databaseManager.getUser(p.getUsername()).getProfilePicture())
               .orElse(null);
     } else {
@@ -46,8 +46,8 @@ public class Thread {
     return title;
   }
 
-  public boolean isCreator() {
-    return isCreator;
+  public boolean getCreator() {
+    return creator;
   }
 
   public String getThreadImage() {
