@@ -10,10 +10,12 @@ public class Thread {
   private final String threadId;
   private final Status status;
   private final String title;
+  private final boolean isCreator;
 
   public Thread(uk.avocado.model.Thread thread, String username) {
     this.threadId = thread.getThreadId();
     this.status = thread.getStatus();
+    this.isCreator = username.equals(thread.getCreator());
 
     if (status == Status.ACCEPTED) {
       final List<Participant> participants = Main.databaseManager
@@ -24,7 +26,6 @@ public class Thread {
     } else {
       title = "Anonymous";
     }
-
   }
 
   public String getThreadId() {
