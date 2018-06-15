@@ -49,9 +49,7 @@ public class DatabaseManager {
 
   public List<uk.avocado.model.Situation> getAllSituations() {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-      return new ArrayList<>(tb.getSession()
-          .createQuery("FROM Situation", uk.avocado.model.Situation.class)
-          .list());
+      return tb.getSession().createQuery("FROM Situation", uk.avocado.model.Situation.class).list();
     }
   }
 
