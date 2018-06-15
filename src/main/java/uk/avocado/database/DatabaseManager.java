@@ -4,10 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.xml.bind.DatatypeConverter;
 import uk.avocado.data.format.HelpArea;
@@ -52,10 +49,9 @@ public class DatabaseManager {
 
   public List<uk.avocado.model.Situation> getAllSituations() {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
-      return tb.getSession().createQuery("FROM Situation", uk.avocado.model.Situation.class)
-          .list()
-          .stream()
-          .collect(Collectors.toList());
+      return new ArrayList<>(tb.getSession()
+          .createQuery("FROM Situation", uk.avocado.model.Situation.class)
+          .list());
     }
   }
 
@@ -71,15 +67,15 @@ public class DatabaseManager {
             final Timestamp ts2 = getLastMessage(username, t2.getThreadId()).getTimestamp();
 
             if (ts1 == null && ts2 == null) {
-              return 0;
+              return t2.getTimestamp().compareTo(t1.getTimestamp());
             }
 
             if (ts1 == null) {
-              return -1;
+              return ts2.compareTo(t1.getTimestamp());
             }
 
             if (ts2 == null) {
-              return 1;
+              return t2.getTimestamp().compareTo(ts1);
             }
 
             return ts2.compareTo(ts1);
