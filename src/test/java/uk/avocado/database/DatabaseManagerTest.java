@@ -91,7 +91,7 @@ public class DatabaseManagerTest {
       oneOf(session).createQuery("FROM User", User.class);
     }});
     closeTransactionBlock();
-    databaseManager.getAllLocations();
+    databaseManager.getAllMapLocations();
   }
 
   @Test

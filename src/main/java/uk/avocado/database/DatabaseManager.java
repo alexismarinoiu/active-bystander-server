@@ -7,11 +7,8 @@ import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 import javax.xml.bind.DatatypeConverter;
-import uk.avocado.data.format.HelpArea;
-import uk.avocado.data.format.Location;
-import uk.avocado.data.format.Message;
-import uk.avocado.data.format.Participant;
-import uk.avocado.data.format.Situation;
+
+import uk.avocado.data.format.*;
 import uk.avocado.data.format.Thread;
 import uk.avocado.model.Status;
 import uk.avocado.model.User;
@@ -38,11 +35,11 @@ public class DatabaseManager {
     }
   }
 
-  public List<Location> getAllLocations() {
+  public List<MapLocation> getAllMapLocations() {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
       return tb.getSession().createQuery("FROM User", User.class).list()
           .stream()
-          .map(user -> new Location(user.getLatitude(), user.getLongitude(), user.getUsername()))
+          .map(MapLocation::new)
           .collect(Collectors.toList());
     }
   }

@@ -15,20 +15,21 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.avocado.AvocadoHttpServletRequest;
 import uk.avocado.Main;
 import uk.avocado.data.format.Location;
+import uk.avocado.data.format.MapLocation;
 
 @RestController
 @RequestMapping("/location")
 public class LocationController {
 
   @RequestMapping(method = {RequestMethod.GET})
-  public ResponseEntity<List<Location>> getLocation(HttpServletRequest givenRequest,
-      @RequestParam(value = "longitude") double longitude,
-      @RequestParam(value = "latitude") double latitude) {
+  public ResponseEntity<List<MapLocation>> getLocation(HttpServletRequest givenRequest,
+                                                       @RequestParam(value = "longitude") double longitude,
+                                                       @RequestParam(value = "latitude") double latitude) {
     final String username = new AvocadoHttpServletRequest(givenRequest).getUsername();
-    return ResponseEntity.ok(Main.databaseManager.getAllLocations().stream()
+    return ResponseEntity.ok(Main.databaseManager.getAllMapLocations().stream()
         .filter(loc -> !loc.getUsername().equals(username))
         .filter(loc -> calculateDistance(loc.getLatitude(), loc.getLongitude(), latitude, longitude)
-            < FILTER_RADIUS)
+        < FILTER_RADIUS)
         .collect(Collectors.toList()));
   }
 
