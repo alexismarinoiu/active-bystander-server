@@ -4,27 +4,21 @@ public class Location {
 
   private Double latitude;
   private Double longitude;
-  private String username;
 
   public Location() {
   }
 
-  public Location(Double latitude, Double longitude, String username) {
+  public Location(double latitude, double longitude, String username) {
     this.latitude = latitude;
     this.longitude = longitude;
-    this.username = username;
   }
 
-  public void setLatitude(Double latitude) {
+  public void setLatitude(double latitude) {
     this.latitude = latitude;
   }
 
-  public void setLongitude(Double longitude) {
+  public void setLongitude(double longitude) {
     this.longitude = longitude;
-  }
-
-  public void setUsername(String username) {
-    this.username = username;
   }
 
   public Double getLatitude() {
@@ -35,7 +29,4 @@ public class Location {
     return longitude;
   }
 
-  public String getUsername() {
-    return username;
-  }
 }

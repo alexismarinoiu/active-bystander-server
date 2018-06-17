@@ -16,10 +16,16 @@ import uk.avocado.AvocadoHttpServletRequest;
 import uk.avocado.Main;
 import uk.avocado.data.format.Location;
 import uk.avocado.data.format.MapLocation;
+import uk.avocado.model.User;
 
 @RestController
 @RequestMapping("/location")
 public class LocationController {
+
+  private static class LocationUser {
+    MapLocation loc;
+    User user;
+  }
 
   @RequestMapping(method = {RequestMethod.GET})
   public ResponseEntity<List<MapLocation>> getLocation(HttpServletRequest givenRequest,
@@ -27,9 +33,22 @@ public class LocationController {
                                                        @RequestParam(value = "latitude") double latitude) {
     final String username = new AvocadoHttpServletRequest(givenRequest).getUsername();
     return ResponseEntity.ok(Main.databaseManager.getAllMapLocations().stream()
-        .filter(loc -> !loc.getUsername().equals(username))
-        .filter(loc -> calculateDistance(loc.getLatitude(), loc.getLongitude(), latitude, longitude)
-        < FILTER_RADIUS)
+         .map(locn -> new LocationUser() {{
+           this.loc = locn;
+           this.user = Main.databaseManager.getUserAroundRegion(loc.getLatitude(), loc.getLongitude());
+         }})
+        .filter(usrloc -> {
+          if (usrloc.user != null) {
+            return !usrloc.user.getUsername().equals(username);
+          }
+
+          return true;
+        })
+        .filter(usrloc -> {
+          final double distance = calculateDistance(usrloc.loc.getLatitude(), usrloc.loc.getLongitude(), latitude, longitude);
+          return distance < FILTER_RADIUS;
+        } )
+        .map(usrloc -> usrloc.loc)
         .collect(Collectors.toList()));
   }
 

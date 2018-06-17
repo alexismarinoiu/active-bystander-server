@@ -1,5 +1,8 @@
 package uk.avocado.data;
 
+import uk.avocado.Main;
+import uk.avocado.model.User;
+
 import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
