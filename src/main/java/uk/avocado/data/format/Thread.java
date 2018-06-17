@@ -24,7 +24,7 @@ public class Thread {
       final List<Participant> participants = Main.databaseManager
           .getParticipantsForThread(threadId);
       title = participants.stream().filter(p -> !p.getUsername().equals(username))
-              .map(Participant::getUsername).collect(Collectors.joining(", "));
+              .map(Participant::getDisplayName).collect(Collectors.joining(", "));
       if (title.trim().length() == 0) {
         title = "(Nobody)";
       }

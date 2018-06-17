@@ -69,7 +69,12 @@ public class ProfileController {
     final String username = request.getUsername();
     final Profile.Builder builder = new Profile.Builder();
     builder.setUsername(username);
-    builder.setDisplayName(username);
+    final String ldapDisplayName = Main.ldaps.getDisplayName(username);
+    if (ldapDisplayName != null) {
+      builder.setDisplayName(ldapDisplayName);
+    } else {
+      builder.setDisplayName(username);
+    }
 
     final User user = Main.databaseManager.getUser(request.getUsername());
     if (user == null) {

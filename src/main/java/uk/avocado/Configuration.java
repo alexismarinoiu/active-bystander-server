@@ -4,6 +4,8 @@ public class Configuration {
 
   private static Configuration instance = null;
   private Type current;
+  private String ldapUsername;
+  private String ldapPassword;
 
   private Configuration() {
     switch (System.getenv("BUILD_ENV")) {
@@ -17,6 +19,9 @@ public class Configuration {
         throw new RuntimeException(
             "Please set BUILD_ENV to either STAGING or PRODUCTION prior to use!");
     }
+
+    ldapUsername = System.getenv("LDAP_USERNAME");
+    ldapPassword = System.getenv("LDAP_PASSWORD");
   }
 
   public static Configuration getInstance() {
@@ -29,6 +34,14 @@ public class Configuration {
 
   public Type getCurrent() {
     return current;
+  }
+
+  public String getLdapUsername() {
+    return ldapUsername;
+  }
+
+  public String getLdapPassword() {
+    return ldapPassword;
   }
 
   public enum Type {

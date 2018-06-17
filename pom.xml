@@ -128,6 +128,11 @@
             <artifactId>pushy</artifactId>
             <version>0.13.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.directory.api</groupId>
+            <artifactId>api-all</artifactId>
+            <version>1.0.1</version>
+        </dependency>
     </dependencies>
 
     <repositories>

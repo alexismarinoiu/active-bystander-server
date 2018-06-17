@@ -1,5 +1,7 @@
 package uk.avocado.data.format;
 
+import uk.avocado.Main;
+
 public class Participant {
 
   private String threadId;
@@ -16,5 +18,14 @@ public class Participant {
 
   public String getUsername() {
     return username;
+  }
+
+  public String getDisplayName() {
+    final String ldapName = Main.ldaps.getDisplayName(getUsername());
+    if (ldapName == null) {
+      return username;
+    }
+
+    return ldapName;
   }
 }
