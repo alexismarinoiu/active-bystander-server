@@ -35,6 +35,17 @@ public class DatabaseManager {
     }
   }
 
+  public void createUserIfDoesNotExist(String username) {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      User user = getUser(username);
+      if (user != null) {
+        return;
+      }
+
+      tb.getSession().saveOrUpdate(new User(username, 0, 0));
+    }
+  }
+
   public List<MapLocation> getAllMapLocations() {
     try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
       return tb.getSession().createQuery("FROM User", User.class).list()
