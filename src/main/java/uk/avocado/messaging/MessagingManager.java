@@ -85,7 +85,7 @@ public class MessagingManager {
     }
 
     final String message =
-        String.format("Hello, I need help dealing with %.60s. Could you please give me some advice?", hl.getSituation());
+        String.format("Hello. I need help dealing with a %.60s situation.", hl.getSituation());
 
     databaseManager.putMessage(username, 0, message, thread.getThreadId());
 

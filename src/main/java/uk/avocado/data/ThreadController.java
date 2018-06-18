@@ -30,8 +30,6 @@ public class ThreadController {
   @RequestMapping(method = RequestMethod.PUT)
   public ResponseEntity<Thread> createThread(HttpServletRequest givenRequest,
       @RequestBody HelpeeLocation helpeeLocation) {
-    final Location location = helpeeLocation.getLocation();
-    final String situation = helpeeLocation.getSituation();
     final AvocadoHttpServletRequest request = new AvocadoHttpServletRequest(givenRequest);
     try {
       final Thread thread = Main.messMan.createThread(request.getUsername(), helpeeLocation);
