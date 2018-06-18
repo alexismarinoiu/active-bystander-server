@@ -10,6 +10,7 @@ public class MapLocation {
   private Double latitude;
   private Double longitude;
   private List<HelpArea> helpAreas;
+  private boolean isKeyHelper;
 
   public MapLocation() {
   }
@@ -18,12 +19,7 @@ public class MapLocation {
     this.latitude = user.getLatitude();
     this.longitude = user.getLongitude();
     this.helpAreas = Main.databaseManager.getHelpAreasForUser(user.getUsername());
-  }
-
-  public MapLocation(double latitude, double longitude, List<HelpArea> helpAreas) {
-    this.latitude = latitude;
-    this.longitude = longitude;
-    this.helpAreas = helpAreas;
+    this.isKeyHelper = user.isKeyHelper();
   }
 
   public void setLatitude(Double latitude) {
@@ -48,5 +44,13 @@ public class MapLocation {
 
   public List<HelpArea> getHelpAreas() {
     return helpAreas;
+  }
+
+  public boolean isKeyHelper() {
+    return isKeyHelper;
+  }
+
+  public void setKeyHelper(boolean keyHelper) {
+    isKeyHelper = keyHelper;
   }
 }

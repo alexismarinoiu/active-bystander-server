@@ -23,39 +23,43 @@ import uk.avocado.model.User;
 public class LocationController {
 
   private static class LocationUser {
+
     MapLocation loc;
     User user;
   }
 
-  @RequestMapping(method = {RequestMethod.GET})
+  @RequestMapping(method = RequestMethod.GET)
   public ResponseEntity<List<MapLocation>> getLocation(HttpServletRequest givenRequest,
-                                                       @RequestParam(value = "longitude") double longitude,
-                                                       @RequestParam(value = "latitude") double latitude) {
+      @RequestParam(value = "longitude") double longitude,
+      @RequestParam(value = "latitude") double latitude) {
     final String username = new AvocadoHttpServletRequest(givenRequest).getUsername();
     return ResponseEntity.ok(Main.databaseManager.getAllMapLocations().stream()
-         .map(locn -> new LocationUser() {{
-           this.loc = locn;
-           this.user = Main.databaseManager.getUserAroundRegion(loc.getLatitude(), loc.getLongitude());
-         }})
-        .filter(usrloc -> {
-          if (usrloc.user != null) {
-            return !usrloc.user.getUsername().equals(username);
+        .map(location -> new LocationUser() {{
+          this.loc = location;
+          this.user = Main.databaseManager
+              .getUserAroundRegion(loc.getLatitude(), loc.getLongitude());
+        }})
+        .filter(userLoc -> {
+          if (userLoc.user != null) {
+            return !userLoc.user.getUsername().equals(username);
           }
-
           return true;
         })
-        .filter(usrloc -> {
-          final double distance = calculateDistance(usrloc.loc.getLatitude(), usrloc.loc.getLongitude(), latitude, longitude);
+        .filter(userLoc -> {
+          final double distance = calculateDistance(userLoc.loc.getLatitude(),
+              userLoc.loc.getLongitude(), latitude, longitude);
           return distance < FILTER_RADIUS;
-        } )
-        .map(usrloc -> usrloc.loc)
+        })
+        .map(userLoc -> userLoc.loc)
         .collect(Collectors.toList()));
   }
 
-  @RequestMapping(method = {RequestMethod.PUT})
-  public ResponseEntity<Location> addLocation(HttpServletRequest givenRequest, @RequestBody Location location) {
+  @RequestMapping(method = RequestMethod.PUT)
+  public ResponseEntity<Location> addLocation(HttpServletRequest givenRequest,
+      @RequestBody Location location) {
     final String username = new AvocadoHttpServletRequest(givenRequest).getUsername();
-    Main.databaseManager.addOrCreateUserWithLocation(username, location.getLatitude(), location.getLongitude());
+    Main.databaseManager
+        .addOrCreateUserWithLocation(username, location.getLatitude(), location.getLongitude());
     return ResponseEntity.ok(location);
   }
 

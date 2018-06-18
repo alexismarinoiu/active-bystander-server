@@ -25,6 +25,9 @@ public class User {
   @Column(name = "profilePicture")
   private String profilePicture;
 
+  @Column(name = "iskeyhelper")
+  private boolean isKeyHelper;
+
   public User() {
   }
 
@@ -72,5 +75,13 @@ public class User {
 
   public void setProfilePicture(String profilePicture) {
     this.profilePicture = profilePicture;
+  }
+
+  public boolean isKeyHelper() {
+    return isKeyHelper;
+  }
+
+  public void setKeyHelper(boolean keyHelper) {
+    isKeyHelper = keyHelper;
   }
 }
