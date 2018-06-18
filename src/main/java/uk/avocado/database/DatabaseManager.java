@@ -394,6 +394,19 @@ public class DatabaseManager {
           .orElse(null);
     }
   }
+
+  public User getUserAroundRegion(double latitude, double longitude) {
+    try (final TransactionBlock tb = new TransactionBlock(sessionFactory)) {
+      final double delta = .000001;
+      List<User> usr = tb.getSession().createQuery("FROM User WHERE (latitude BETWEEN :latlo AND :lathi) AND (longitude BETWEEN :lonlo AND :lonhi)", User.class)
+              .setParameter("latlo", latitude - delta)
+              .setParameter("lathi", latitude + delta)
+              .setParameter("lonlo", longitude - delta)
+              .setParameter("lonhi", longitude + delta)
+              .list();
+      return usr.stream().findFirst().orElse(null);
+    }
+  }
 }
 
 

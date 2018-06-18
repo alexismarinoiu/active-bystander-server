@@ -35,7 +35,11 @@ public class ThreadController {
       @RequestBody Location location) {
     final AvocadoHttpServletRequest request = new AvocadoHttpServletRequest(givenRequest);
     try {
-      return ResponseEntity.ok(Main.messMan.createThread(request.getUsername(), location));
+      final Thread thread = Main.messMan.createThread(request.getUsername(), location);
+      if (thread == null) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+      }
+      return ResponseEntity.ok(thread);
     } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
       e.printStackTrace();
       return ResponseEntity.status(500).build();

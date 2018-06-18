@@ -4,11 +4,14 @@ import com.turo.pushy.apns.util.ApnsPayloadBuilder;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+
+import uk.avocado.Main;
 import uk.avocado.data.format.Location;
 import uk.avocado.data.format.Message;
 import uk.avocado.data.format.Participant;
 import uk.avocado.data.format.Thread;
 import uk.avocado.database.DatabaseManager;
+import uk.avocado.model.User;
 import uk.avocado.notifications.PushNotificationManager;
 
 public class MessagingManager {
@@ -55,7 +58,12 @@ public class MessagingManager {
 
   public Thread createThread(final String username, final Location location)
       throws UnsupportedEncodingException, NoSuchAlgorithmException {
-    final Thread thread = databaseManager.createOrRetrieveThread(username, location.getUsername());
+    final User userToConnect = Main.databaseManager.getUserAroundRegion(location.getLatitude(), location.getLongitude());
+    if (userToConnect == null) {
+      return null;
+    }
+
+    final Thread thread = databaseManager.createOrRetrieveThread(username, userToConnect.getUsername());
     final List<Participant> otherParticipants = databaseManager
         .getParticipantsForThreadExcept(thread.getThreadId(), username);
     // This is kinda terrible
