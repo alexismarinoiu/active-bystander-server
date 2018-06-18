@@ -26,27 +26,29 @@ public class MessagingManager {
   }
 
   public Message sendMessage(final String username, final int sequenceNumber, final String message,
-      final String threadId) {
-    final List<Participant> otherParticipants = databaseManager
-        .getParticipantsForThreadExcept(threadId, username);
+      final String threadId, boolean isNewThread) {
+    if (!isNewThread) {
+      final List<Participant> otherParticipants = databaseManager
+          .getParticipantsForThreadExcept(threadId, username);
 
-    // Send notifications to users, ignore if they don't have their device registered
-    for (final Participant participant : otherParticipants) {
-      final uk.avocado.model.Thread databaseThread = databaseManager.getThread(threadId);
-      if (databaseThread == null) {
-        continue;
+      // Send notifications to users, ignore if they don't have their device registered
+      for (final Participant participant : otherParticipants) {
+        final uk.avocado.model.Thread databaseThread = databaseManager.getThread(threadId);
+        if (databaseThread == null) {
+          continue;
+        }
+
+        final Thread thread = new Thread(databaseThread, participant.getUsername());
+        final String payload = new ApnsPayloadBuilder()
+            .setAlertTitle(String.format("Message from %.20s", thread.getTitle()))
+            .setAlertBody(String.format("%.500s", message))
+            .setSoundFileName("default")
+            .addCustomProperty("threadId", thread.getThreadId())
+            .addCustomProperty("title", thread.getTitle())
+            .addCustomProperty("status", thread.getStatus().toString())
+            .buildWithDefaultMaximumLength();
+        pushMan.send(participant.getUsername(), payload);
       }
-
-      final Thread thread = new Thread(databaseThread, participant.getUsername());
-      final String payload = new ApnsPayloadBuilder()
-              .setAlertTitle(String.format("Message from %.20s", thread.getTitle()))
-              .setAlertBody(String.format("%.500s", message))
-              .setSoundFileName("default")
-              .addCustomProperty("threadId", thread.getThreadId())
-              .addCustomProperty("title", thread.getTitle())
-              .addCustomProperty("status", thread.getStatus().toString())
-              .buildWithDefaultMaximumLength();
-      pushMan.send(participant.getUsername(), payload);
     }
 
     return databaseManager.putMessage(username, sequenceNumber, message, threadId);

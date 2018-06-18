@@ -14,10 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import uk.avocado.AvocadoHttpServletRequest;
 import uk.avocado.Main;
-import uk.avocado.data.format.Location;
-import uk.avocado.data.format.Message;
-import uk.avocado.data.format.Participant;
-import uk.avocado.data.format.SentMessage;
+import uk.avocado.data.format.*;
 import uk.avocado.data.format.Thread;
 
 @RestController
@@ -32,13 +29,18 @@ public class ThreadController {
 
   @RequestMapping(method = RequestMethod.PUT)
   public ResponseEntity<Thread> createThread(HttpServletRequest givenRequest,
-      @RequestBody Location location) {
+      @RequestBody HelpeeLocation helpeeLocation) {
+    final Location location = helpeeLocation.getLocation();
+    final String situation = helpeeLocation.getSituation();
     final AvocadoHttpServletRequest request = new AvocadoHttpServletRequest(givenRequest);
     try {
       final Thread thread = Main.messMan.createThread(request.getUsername(), location);
       if (thread == null) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
       }
+      Main.messMan
+          .sendMessage(request.getUsername(), 1, "Hello, I need help dealing with "
+              + situation.toLowerCase() + ". Could you please give me some advice?", thread.getThreadId(), true);
       return ResponseEntity.ok(thread);
     } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
       e.printStackTrace();
@@ -74,7 +76,7 @@ public class ThreadController {
     }
 
     return ResponseEntity.ok(Main.messMan
-        .sendMessage(request.getUsername(), message.getSeq(), message.getContent(), threadId));
+        .sendMessage(request.getUsername(), message.getSeq(), message.getContent(), threadId, false));
   }
 
   @RequestMapping(value = "/{threadId}", method = RequestMethod.DELETE)
