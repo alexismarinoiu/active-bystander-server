@@ -6,9 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import uk.avocado.Main;
-import uk.avocado.data.format.Location;
-import uk.avocado.data.format.Message;
-import uk.avocado.data.format.Participant;
+import uk.avocado.data.format.*;
 import uk.avocado.data.format.Thread;
 import uk.avocado.database.DatabaseManager;
 import uk.avocado.model.User;
@@ -26,8 +24,7 @@ public class MessagingManager {
   }
 
   public Message sendMessage(final String username, final int sequenceNumber, final String message,
-      final String threadId, boolean isNewThread) {
-    if (!isNewThread) {
+      final String threadId) {
       final List<Participant> otherParticipants = databaseManager
           .getParticipantsForThreadExcept(threadId, username);
 
@@ -48,7 +45,6 @@ public class MessagingManager {
             .addCustomProperty("status", thread.getStatus().toString())
             .buildWithDefaultMaximumLength();
         pushMan.send(participant.getUsername(), payload);
-      }
     }
 
     return databaseManager.putMessage(username, sequenceNumber, message, threadId);
@@ -58,9 +54,9 @@ public class MessagingManager {
     return databaseManager.getAllThreadsForUser(username);
   }
 
-  public Thread createThread(final String username, final Location location)
+  public Thread createThread(final String username, final HelpeeLocation hl)
       throws UnsupportedEncodingException, NoSuchAlgorithmException {
-    final User userToConnect = Main.databaseManager.getUserAroundRegion(location.getLatitude(), location.getLongitude());
+    final User userToConnect = Main.databaseManager.getUserAroundRegion(hl.getLocation().getLatitude(), hl.getLocation().getLongitude());
     if (userToConnect == null) {
       return null;
     }
@@ -78,7 +74,7 @@ public class MessagingManager {
 
       final Thread userThread = new Thread(databaseThread, participant.getUsername());
       final String payload = new ApnsPayloadBuilder()
-              .setAlertTitle(String.format("%.20s needs your help!", userThread.getTitle()))
+              .setAlertTitle(String.format("%.20s needs your help with %.60s!", userThread.getTitle(), hl.getSituation()))
               .setSoundFileName("default")
               .addCustomProperty("threadId", userThread.getThreadId())
               .addCustomProperty("title", userThread.getTitle())
@@ -86,6 +82,11 @@ public class MessagingManager {
               .buildWithDefaultMaximumLength();
       pushMan.send(participant.getUsername(), payload);
     }
+
+    final String message =
+        String.format("Hello, I need help dealing with %.60s. Could you please give me some advice?", hl.getSituation());
+
+    databaseManager.putMessage(username, 0, message, thread.getThreadId());
 
     return thread;
   }

@@ -5,7 +5,6 @@ public class HelpeeLocation {
   private String situation;
 
   public HelpeeLocation() {
-
   }
 
   public HelpeeLocation(Location location, String situation) {

@@ -34,13 +34,10 @@ public class ThreadController {
     final String situation = helpeeLocation.getSituation();
     final AvocadoHttpServletRequest request = new AvocadoHttpServletRequest(givenRequest);
     try {
-      final Thread thread = Main.messMan.createThread(request.getUsername(), location);
+      final Thread thread = Main.messMan.createThread(request.getUsername(), helpeeLocation);
       if (thread == null) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
       }
-      Main.messMan
-          .sendMessage(request.getUsername(), 1, "Hello, I need help dealing with "
-              + situation.toLowerCase() + ". Could you please give me some advice?", thread.getThreadId(), true);
       return ResponseEntity.ok(thread);
     } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
       e.printStackTrace();
@@ -76,7 +73,7 @@ public class ThreadController {
     }
 
     return ResponseEntity.ok(Main.messMan
-        .sendMessage(request.getUsername(), message.getSeq(), message.getContent(), threadId, false));
+        .sendMessage(request.getUsername(), message.getSeq(), message.getContent(), threadId));
   }
 
   @RequestMapping(value = "/{threadId}", method = RequestMethod.DELETE)
