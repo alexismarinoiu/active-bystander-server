@@ -14,10 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import uk.avocado.AvocadoHttpServletRequest;
 import uk.avocado.Main;
-import uk.avocado.data.format.Location;
-import uk.avocado.data.format.Message;
-import uk.avocado.data.format.Participant;
-import uk.avocado.data.format.SentMessage;
+import uk.avocado.data.format.*;
 import uk.avocado.data.format.Thread;
 
 @RestController
@@ -32,10 +29,10 @@ public class ThreadController {
 
   @RequestMapping(method = RequestMethod.PUT)
   public ResponseEntity<Thread> createThread(HttpServletRequest givenRequest,
-      @RequestBody Location location) {
+      @RequestBody HelpeeLocation helpeeLocation) {
     final AvocadoHttpServletRequest request = new AvocadoHttpServletRequest(givenRequest);
     try {
-      final Thread thread = Main.messMan.createThread(request.getUsername(), location);
+      final Thread thread = Main.messMan.createThread(request.getUsername(), helpeeLocation);
       if (thread == null) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
       }
