@@ -4,6 +4,9 @@ stages:
   - deploy_staging
   - deploy_production
 
+before_script:
+  - export MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=128m"
+
 build:
   stage: build
   script:
@@ -18,9 +21,9 @@ deploy_staging:
   stage: deploy_staging
   script:
     - pwd
-    - mvn package
+    - mvn compile package
     - ssh cd sudo service ab-staging stop
-    - scp -B target/active-bystander-1.0-SNAPSHOT-jar-with-dependencies.jar cd:staging/active-bystander-1.0-SNAPSHOT.jar
+    - scp -B target/active-bystander-1.0-SNAPSHOT.jar cd:staging
     - ssh cd sudo service ab-staging start
   only:
     - develop
@@ -29,9 +32,9 @@ deploy_production:
   stage: deploy_production
   script:
     - pwd
-    - mvn package
+    - mvn compile package
     - ssh cd sudo service ab-production stop
-    - scp -B target/active-bystander-1.0-SNAPSHOT-jar-with-dependencies.jar cd:production/active-bystander-1.0-SNAPSHOT.jar
+    - scp -B target/active-bystander-1.0-SNAPSHOT.jar cd:production
     - ssh cd sudo service ab-production start
   only:
     - master

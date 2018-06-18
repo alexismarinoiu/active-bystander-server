@@ -1,0 +1,8 @@
+ALTER TABLE thread
+ADD COLUMN creator VARCHAR(255);
+
+UPDATE thread SET creator = '';
+
+ALTER TABLE thread
+ADD COLUMN timestamp TIMESTAMP
+DEFAULT CURRENT_TIMESTAMP;
