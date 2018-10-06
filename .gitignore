@@ -30,6 +30,5 @@ fabric.properties
 .DS_Store
 
 /target
-*.orig
-/src/main/java/uk/avocado/database/test.sql
-.idea/sqldialects.xml
+src/main/resources/aps.p8
+src/main/resources/hibernate.cfg.xml
